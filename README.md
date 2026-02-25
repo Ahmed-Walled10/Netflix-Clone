@@ -41,18 +41,18 @@ This project follows **Clean Architecture** with strict layer separation:
 ```
 src
  ├── API
- │    └── GloboTicket.TicketManagement.Api → Minimal API endpoints, Middleware, DI wiring
+ │    └── NetflixClone.Api → Minimal API endpoints, Middleware, DI wiring
  ├── Core
- │    ├── GloboTicket.TicketManagement.Application → Use Cases (CQRS), DTOs, Interfaces, Validators
- │    └── GloboTicket.TicketManagement.Domain  → Entities, Value Objects, Domain Events, Aggregates
+ │    ├── NetflixClone.Application → Use Cases (CQRS), DTOs, Interfaces, Validators
+ │    └── NetflixClone.Domain  → Entities, Value Objects, Domain Events, Aggregates
  └── Infrastructure
-      ├── GloboTicket.TicketManagement.Infrastructure → EF Core, Repos, External Services, Hangfire
-      └── GloboTicket.TicketManagement.Persistence
+      ├── NetflixClone.Infrastructure → EF Core, Repos, External Services, Hangfire
+      └── NetflixClone.Persistence
 
 tests
-├── GloboTicket.TicketManagement.Domain.Tests
-├── GloboTicket.TicketManagement.Application.Tests
-└── GloboTicket.TicketManagement.Integration.Tests
+├── NetflixClone.Domain.Tests
+├── NetflixClone.Application.Tests
+└── NetflixClone.Integration.Tests
 ```
 
 ### Layer Rules
@@ -418,13 +418,13 @@ dotnet test tests/NetflixClone.Integration.Tests
 ```
 src/
 ├── API/
-│   └── GloboTicket.TicketManagement.Api/
+│   └── NetflixClone.Api/
 │       ├── Endpoints/              → Minimal API route definitions per context
 │       ├── Middleware/             → Exception handling, rate limiting
 │       └── DependencyInjection/    → Service registration extensions
 │
 ├── Core/
-│   ├── GloboTicket.TicketManagement.Domain/
+│   ├── NetflixClone.Domain/
 │   │   ├── Identity/               → Account, Profile, RefreshToken, Role aggregates
 │   │   ├── Subscription/           → Plan, Subscription, Invoice, PaymentMethod
 │   │   ├── Catalog/                → Content, Season, Episode, Genre, Person
@@ -433,7 +433,7 @@ src/
 │   │   ├── Discovery/              → RecommendationScore, TrendingSnapshot
 │   │   └── Shared/                 → Base entities, domain events, value objects
 │   │
-│   └── GloboTicket.TicketManagement.Application/
+│   └── NetflixClone.Application/
 │       ├── Identity/               → Register, Login, RefreshToken, Profile commands/queries
 │       ├── Subscription/           → Subscribe, Upgrade, Cancel, Invoice queries
 │       ├── Catalog/                → Browse, GetDetail, Admin CRUD commands
@@ -444,12 +444,12 @@ src/
 │       └── Interfaces/             → Repository & service contracts
 │
 ├── Infrastructure/
-│   ├── GloboTicket.TicketManagement.Persistence/
+│   ├── NetflixClone.Persistence/
 │   │   ├── ApplicationDbContext/   → EF Core DbContext
 │   │   ├── Configurations/         → EF entity configurations
 │   │   └── Migrations/             → Database migrations
 │   │
-│   └── GloboTicket.TicketManagement.Infrastructure/
+│   └── NetflixClone.Infrastructure/
 │       ├── Repositories/           → EF Core repository implementations
 │       ├── Identity/               → JWT, token hashing services
 │       ├── Storage/                → Azure Blob service
@@ -460,9 +460,9 @@ src/
 
 tests/
 
-├── GloboTicket.TicketManagement.Domain.Tests/
-├── GloboTicket.TicketManagement.Application.Tests/
-└── GloboTicket.TicketManagement.Integration.Tests/
+├── NetflixClone.Domain.Tests/
+├── NetflixClone.Application.Tests/
+└── NetflixClone.Integration.Tests/
 ```
 
 ---
