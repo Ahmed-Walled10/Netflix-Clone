@@ -39,16 +39,15 @@ A **production-grade Netflix backend clone** built with ASP.NET 9, Clean Archite
 This project follows **Clean Architecture** with strict layer separation:
 
 ```
-src/
-├── NetflixClone.Domain/          → Entities, Value Objects, Domain Events, Aggregates
-├── NetflixClone.Application/     → Use Cases (CQRS), DTOs, Interfaces, Validators
-├── NetflixClone.Infrastructure/  → EF Core, Repos, External Services, Hangfire
-└── NetflixClone.API/             → Minimal API endpoints, Middleware, DI wiring
-
-tests/
-├── NetflixClone.Domain.Tests/
-├── NetflixClone.Application.Tests/
-└── NetflixClone.Integration.Tests/
+src
+ ├── API
+ │    └── GloboTicket.TicketManagement.Api → Minimal API endpoints, Middleware, DI wiring
+ ├── Core
+ │    ├── GloboTicket.TicketManagement.Application → Use Cases (CQRS), DTOs, Interfaces, Validators
+ │    └── GloboTicket.TicketManagement.Domain  → Entities, Value Objects, Domain Events, Aggregates
+ └── Infrastructure
+      ├── GloboTicket.TicketManagement.Infrastructure → EF Core, Repos, External Services, Hangfire
+      └── GloboTicket.TicketManagement.Persistence
 ```
 
 ### Layer Rules
@@ -413,39 +412,52 @@ dotnet test tests/NetflixClone.Integration.Tests
 
 ```
 src/
-├── NetflixClone.Domain/
-│   ├── Identity/          → Account, Profile, RefreshToken, Role aggregates
-│   ├── Subscription/      → Plan, Subscription, Invoice, PaymentMethod
-│   ├── Catalog/           → Content, Season, Episode, Genre, Person
-│   ├── Media/             → VideoAsset, VideoVariant, EncodingJob
-│   ├── Engagement/        → WatchHistory, Rating, Review, Watchlist
-│   ├── Discovery/         → RecommendationScore, TrendingSnapshot
-│   └── Shared/            → Base entities, domain events, value objects
+├── API/
+│   └── GloboTicket.TicketManagement.Api/
+│       ├── Endpoints/              → Minimal API route definitions per context
+│       ├── Middleware/             → Exception handling, rate limiting
+│       └── DependencyInjection/    → Service registration extensions
 │
-├── NetflixClone.Application/
-│   ├── Identity/          → Register, Login, RefreshToken, Profile commands/queries
-│   ├── Subscription/      → Subscribe, Upgrade, Cancel, Invoice queries
-│   ├── Catalog/           → Browse, GetDetail, Admin CRUD commands
-│   ├── Media/             → Upload, Encode, Stream commands
-│   ├── Engagement/        → WatchHistory, Rating, Review commands
-│   ├── Discovery/         → Search, Recommendations, Trending queries
-│   ├── Common/            → Pipeline behaviors (validation, logging, caching)
-│   └── Interfaces/        → Repository & service contracts
+├── Core/
+│   ├── GloboTicket.TicketManagement.Domain/
+│   │   ├── Identity/               → Account, Profile, RefreshToken, Role aggregates
+│   │   ├── Subscription/           → Plan, Subscription, Invoice, PaymentMethod
+│   │   ├── Catalog/                → Content, Season, Episode, Genre, Person
+│   │   ├── Media/                  → VideoAsset, VideoVariant, EncodingJob
+│   │   ├── Engagement/             → WatchHistory, Rating, Review, Watchlist
+│   │   ├── Discovery/              → RecommendationScore, TrendingSnapshot
+│   │   └── Shared/                 → Base entities, domain events, value objects
+│   │
+│   └── GloboTicket.TicketManagement.Application/
+│       ├── Identity/               → Register, Login, RefreshToken, Profile commands/queries
+│       ├── Subscription/           → Subscribe, Upgrade, Cancel, Invoice queries
+│       ├── Catalog/                → Browse, GetDetail, Admin CRUD commands
+│       ├── Media/                  → Upload, Encode, Stream commands
+│       ├── Engagement/             → WatchHistory, Rating, Review commands
+│       ├── Discovery/              → Search, Recommendations, Trending queries
+│       ├── Common/                 → Pipeline behaviors (validation, logging, caching)
+│       └── Interfaces/             → Repository & service contracts
 │
-├── NetflixClone.Infrastructure/
-│   ├── Persistence/       → ApplicationDbContext, EF configurations, migrations
-│   ├── Repositories/      → EF Core repository implementations
-│   ├── Identity/          → JWT, token hashing services
-│   ├── Storage/           → Azure Blob service
-│   ├── Payment/           → Stripe service, webhook handler
-│   ├── Caching/           → Redis implementation
-│   ├── Jobs/              → Hangfire job definitions and schedulers
-│   └── Search/            → Full-text search implementation
-│
-└── NetflixClone.API/
-    ├── Endpoints/         → Minimal API route definitions per context
-    ├── Middleware/         → Exception handling, rate limiting
-    └── DependencyInjection → Service registration extensions
+├── Infrastructure/
+│   ├── GloboTicket.TicketManagement.Persistence/
+│   │   ├── ApplicationDbContext/   → EF Core DbContext
+│   │   ├── Configurations/         → EF entity configurations
+│   │   └── Migrations/             → Database migrations
+│   │
+│   └── GloboTicket.TicketManagement.Infrastructure/
+│       ├── Repositories/           → EF Core repository implementations
+│       ├── Identity/               → JWT, token hashing services
+│       ├── Storage/                → Azure Blob service
+│       ├── Payment/                → Stripe service, webhook handler
+│       ├── Caching/                → Redis implementation
+│       ├── Jobs/                   → Hangfire job definitions and schedulers
+│       └── Search/                 → Full-text search implementation
+
+tests/
+
+├── GloboTicket.TicketManagement.Domain.Tests/
+├── GloboTicket.TicketManagement.Application.Tests/
+└── GloboTicket.TicketManagement.Integration.Tests/
 ```
 
 ---
