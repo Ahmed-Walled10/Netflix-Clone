@@ -48,6 +48,11 @@ src
  └── Infrastructure
       ├── GloboTicket.TicketManagement.Infrastructure → EF Core, Repos, External Services, Hangfire
       └── GloboTicket.TicketManagement.Persistence
+
+tests
+├── GloboTicket.TicketManagement.Domain.Tests
+├── GloboTicket.TicketManagement.Application.Tests
+└── GloboTicket.TicketManagement.Integration.Tests
 ```
 
 ### Layer Rules
