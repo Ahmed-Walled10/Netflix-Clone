@@ -47,7 +47,7 @@ src
  │    └── NetflixClone.Domain  → Entities, Value Objects, Domain Events, Aggregates
  └── Infrastructure
       ├── NetflixClone.Infrastructure → EF Core, Repos, External Services, Hangfire
-      └── NetflixClone.Persistence
+      └── NetflixClone.Persistence → ApplicationDbContext, EF configurations, migrations
 
 tests
 ├── NetflixClone.Domain.Tests
