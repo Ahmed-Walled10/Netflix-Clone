@@ -3,9 +3,86 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{12E1CE6C-4B59-44F1-B187-B4AF23F0490B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D40959A6-F295-4990-873E-906F24638663}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C832299C-61C7-4E20-91BB-970ACE7C2F29}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{32890B2E-E637-4B25-BAFA-8BD92F179B0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Application", "NetflixClone.Application\NetflixClone.Application.csproj", "{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Domain", "NetflixClone.Domain\NetflixClone.Domain.csproj", "{76E22B40-3ABE-42E0-877D-06386BEC5054}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Infrastructure", "NetflixClone.Infrastructure\NetflixClone.Infrastructure.csproj", "{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Persistence", "NetflixClone.Persistence\NetflixClone.Persistence.csproj", "{5BD6E908-732B-4B98-9EDD-556D2F4EA29B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Api", "NetflixClone.Api\NetflixClone.Api.csproj", "{955B75A8-380B-4C4C-9827-F7F48548E642}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Domain.Tests", "NetflixClone.Domain.Tests\NetflixClone.Domain.Tests.csproj", "{1239A298-2F1F-47AD-8EE6-2C832AE6D162}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Application.Tests", "NetflixClone.Application.Tests\NetflixClone.Application.Tests.csproj", "{4C7FBE8C-E29E-4048-B2CC-8CBE94463895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetflixClone.Integration.Tests", "NetflixClone.Integration.Tests\NetflixClone.Integration.Tests.csproj", "{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76E22B40-3ABE-42E0-877D-06386BEC5054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76E22B40-3ABE-42E0-877D-06386BEC5054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76E22B40-3ABE-42E0-877D-06386BEC5054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76E22B40-3ABE-42E0-877D-06386BEC5054}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD6E908-732B-4B98-9EDD-556D2F4EA29B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD6E908-732B-4B98-9EDD-556D2F4EA29B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD6E908-732B-4B98-9EDD-556D2F4EA29B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD6E908-732B-4B98-9EDD-556D2F4EA29B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{955B75A8-380B-4C4C-9827-F7F48548E642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{955B75A8-380B-4C4C-9827-F7F48548E642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{955B75A8-380B-4C4C-9827-F7F48548E642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{955B75A8-380B-4C4C-9827-F7F48548E642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1239A298-2F1F-47AD-8EE6-2C832AE6D162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1239A298-2F1F-47AD-8EE6-2C832AE6D162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1239A298-2F1F-47AD-8EE6-2C832AE6D162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1239A298-2F1F-47AD-8EE6-2C832AE6D162}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C7FBE8C-E29E-4048-B2CC-8CBE94463895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C7FBE8C-E29E-4048-B2CC-8CBE94463895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C7FBE8C-E29E-4048-B2CC-8CBE94463895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7FBE8C-E29E-4048-B2CC-8CBE94463895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12E1CE6C-4B59-44F1-B187-B4AF23F0490B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D40959A6-F295-4990-873E-906F24638663} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C832299C-61C7-4E20-91BB-970ACE7C2F29} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DCFA26AC-AFDE-4FBD-B1C0-D4501094455F} = {D40959A6-F295-4990-873E-906F24638663}
+		{76E22B40-3ABE-42E0-877D-06386BEC5054} = {D40959A6-F295-4990-873E-906F24638663}
+		{A4A35E58-785E-4BF0-A6D0-C905BD5A02D2} = {C832299C-61C7-4E20-91BB-970ACE7C2F29}
+		{5BD6E908-732B-4B98-9EDD-556D2F4EA29B} = {C832299C-61C7-4E20-91BB-970ACE7C2F29}
+		{955B75A8-380B-4C4C-9827-F7F48548E642} = {12E1CE6C-4B59-44F1-B187-B4AF23F0490B}
+		{1239A298-2F1F-47AD-8EE6-2C832AE6D162} = {32890B2E-E637-4B25-BAFA-8BD92F179B0D}
+		{4C7FBE8C-E29E-4048-B2CC-8CBE94463895} = {32890B2E-E637-4B25-BAFA-8BD92F179B0D}
+		{9F35DADF-5A92-449A-ACBE-EBFA26A0EE4F} = {32890B2E-E637-4B25-BAFA-8BD92F179B0D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF7B7C8F-89B2-4910-91DD-41D90516CF36}

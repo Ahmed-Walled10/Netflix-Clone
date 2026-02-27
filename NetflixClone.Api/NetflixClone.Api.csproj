@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetflixClone.Application\NetflixClone.Application.csproj" />
+    <ProjectReference Include="..\NetflixClone.Infrastructure\NetflixClone.Infrastructure.csproj" />
+    <ProjectReference Include="..\NetflixClone.Persistence\NetflixClone.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>
