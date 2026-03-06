@@ -1,7 +1,7 @@
 using NetflixClone.Domain.Common.Primitives;
 using NetflixClone.Domain.Common.Enums;
 
-namespace NetflixClone.Domain.Entities.Subscription;
+namespace NetflixClone.Domain.Entities.Subscriptions;
 
 public class Plan : BaseEntity
 {
@@ -16,6 +16,13 @@ public class Plan : BaseEntity
 
     /// <summary>Max number of profiles the account holder can create under this plan.</summary>
     public int MaxProfiles { get; set; }
+
+    /// <summary>
+    ///    Video quality allowed by this plan. Higher plans can access content in better quality.
+    ///    Used to determine which content a user can watch and at what quality.
+    ///    E.g. Basic = SD, Standard = HD, Premium = 4K.
+    /// </summary>
+    public VideoQuality MaxVideoQuality { get; set; }
 
     /// <summary>
     /// Stripe Price ID (price_xxxx) for this plan.

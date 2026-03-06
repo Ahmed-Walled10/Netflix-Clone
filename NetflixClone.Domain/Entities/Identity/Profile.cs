@@ -26,7 +26,7 @@ public class Profile : AuditableEntity
     public int Age { get; set; } = 0;
 
     /// <summary>
-    /// When true, content is filtered to G / PG / TV-Y / TV-Y7 / TV-G / TV-PG only.
+    /// When true, content is filtered to G / TV-PG / TV-Y7  only.
     /// Auto-set when Age < 13. Can also be toggled manually by the account owner.
     /// </summary>
     public bool IsKidsMode { get; set; } = false;

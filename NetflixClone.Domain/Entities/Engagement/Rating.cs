@@ -16,12 +16,17 @@ public class Rating : AuditableEntity
         get => _value;
         set
         {
-            if (value <= 1 || value >= 5)
+            if (value < 1 || value > 5)
                 throw new ArgumentOutOfRangeException(nameof(Value), "Rating must be between 1 and 5");
 
             _value = value;
         }
     }
+
+    public string? Review { get; set; }
+
+    public DateTime RatedAt { get; set; } = DateTime.UtcNow;
+
 
     // ── Navigation ───────────────────────────────────────────────────
     public Identity.Profile Profile { get; set; } = null!;

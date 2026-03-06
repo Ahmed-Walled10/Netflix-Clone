@@ -4,6 +4,10 @@ namespace NetflixClone.Domain.Entities.Identity;
 
 public class ApplicationUser : IdentityUser
 {
+
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+
     // ── Stripe ──────────────────────────────────────────────────────
     /// <summary>
     /// The Stripe Customer ID for this account (cus_xxxx).
@@ -23,12 +27,12 @@ public class ApplicationUser : IdentityUser
 
     // ── Audit ────────────────────────────────────────────────────────
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
 
     // ── Navigation ──────────────────────────────────────────────────
     public ICollection<Profile> Profiles { get; set; } = [];
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
-    public ICollection<Subscription.Subscription> Subscriptions { get; set; } = [];
-    public ICollection<Subscription.PaymentMethod> PaymentMethods { get; set; } = [];
+    public ICollection<Subscriptions.Subscription> Subscriptions { get; set; } = [];
+    public ICollection<Subscriptions.PaymentMethod> PaymentMethods { get; set; } = [];
 }

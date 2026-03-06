@@ -1,7 +1,7 @@
 using NetflixClone.Domain.Common.Primitives;
 using NetflixClone.Domain.Common.Enums;
 
-namespace NetflixClone.Domain.Entities.Subscription;
+namespace NetflixClone.Domain.Entities.Subscriptions;
 
 public class Invoice : BaseEntity
 {

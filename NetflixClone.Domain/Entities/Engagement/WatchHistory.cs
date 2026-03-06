@@ -16,7 +16,8 @@ public class WatchHistory : BaseEntity
     public int StoppedAtSeconds { get; set; } = 0;
 
     /// <summary>Full runtime in seconds. Copied from Content/Episode at first watch.</summary>
-    public int TotalDurationSeconds { get; set; }
+     
+     // public int TotalDurationSeconds { get; set; }
 
     /// <summary>
     /// True when the user has watched at least 90% of the content.
@@ -26,7 +27,7 @@ public class WatchHistory : BaseEntity
 
     // ── Timestamps ────────────────────────────────────────────────────
     /// <summary>Last time this record was updated (i.e. last time the user watched).</summary>
-    public DateTime WatchedAt { get; set; } = DateTime.UtcNow;
+    public DateTime WatchedAt { get; set; }
 
     /// <summary>When IsCompleted was first set to true. Null if not yet completed.</summary>
     public DateTime? CompletedAt { get; set; }

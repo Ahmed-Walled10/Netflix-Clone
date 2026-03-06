@@ -44,4 +44,5 @@ public class StreamingSession : BaseEntity
 
     // ── Navigation ───────────────────────────────────────────────────
     public Identity.Profile Profile { get; set; } = null!;
+    public Catalog.Content Content { get; set; } = null!;
 }

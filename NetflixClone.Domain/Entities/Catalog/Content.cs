@@ -24,7 +24,7 @@ public class Content : AuditableEntity
     public int? DurationMinutes { get; set; }
 
     // ── Age restriction ───────────────────────────────────────────────
-    public MaturityRating MaturityRating { get; set; } = MaturityRating.TV_G;
+    public MaturityRating MaturityRating { get; set; }
 
     public string OriginalLanguage { get; set; } = "en";
 
@@ -64,7 +64,7 @@ public class Content : AuditableEntity
     /// <summary>
     /// Weighted average of all Rating values for this content.
     /// Recalculated by a domain event whenever a rating is added, changed, or removed.
-    /// Scale: 0.00 – 1.00
+    /// Scale: 0.0 – 5.0
     /// </summary>
     public decimal AverageRating => TotalRatings == 0 ? 0 : (Decimal)Ratings.Sum(r => r.Value) / (TotalRatings * 5);
 

@@ -1,6 +1,6 @@
 using NetflixClone.Domain.Common.Primitives;
 
-namespace NetflixClone.Domain.Entities.Subscription;
+namespace NetflixClone.Domain.Entities.Subscriptions;
 
 public class PaymentMethod : BaseEntity
 {
