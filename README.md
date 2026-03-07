@@ -12,7 +12,6 @@
 
 A **production-grade Netflix backend clone** built with ASP.NET 9, Clean Architecture, CQRS, and real-world patterns used in professional streaming platforms.
 
-> 🚧 **Currently building the MVP** — a focused, working backend before layering in advanced features.
 
 [MVP Scope](#-mvp-scope) • [Architecture](#️-architecture) • [Tech Stack](#️-tech-stack) • [API Docs](#-api-endpoints) • [Progress](#-build-progress) • [Getting Started](#-getting-started)
 
@@ -32,7 +31,7 @@ The MVP strips the full project bible down to what actually matters for a first 
 | Video Streaming | Simplified: direct MP4 SAS URLs from Azure Blob, concurrency enforcement | 🔜 Next |
 | Media Pipeline | Admin uploads → Azure Blob → store URL → mark ready. No FFmpeg | 🔜 Next |
 | Full-Text Search | SQL Server FTS on Title, Description, Cast | 🔜 Next |
-| Engagement | Watch history, continue watching, thumb ratings — add after core is done | ⏳ Optional |
+| Engagement | Watch history, continue watching, thumb ratings — add after core is done | 🔜 Next |
 | Trending | ViewCount++ on every stream start + daily Hangfire snapshot | 🔜 Next |
 | Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔜 Next |
 | Email Flows | Confirm email, reset password, reset PIN, send invoice | 🔜 Next |
@@ -318,8 +317,6 @@ tests
 - [x] `Program.cs` updated to register Persistence services
 - [ ] Global exception handling middleware
 - [ ] MediatR pipeline (logging, validation, caching behaviors)
-- [ ] FluentValidation integration
-- [ ] Scalar / Swagger docs setup
 
 ---
 
@@ -424,7 +421,7 @@ tests
 
 ---
 
-### Phase 10 — Engagement ⏳ *(Optional)*
+### Phase 10 — Engagement 🔜
 > Watch history, Continue Watching, Ratings
 
 - [ ] Watch progress upsert on stream end (`StoppedAtSeconds`, `TotalDurationSeconds`)
