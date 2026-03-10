@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetflixClone.Domain.Entities.Media;
+using NetflixClone.Domain.Entities.Catalog;
 
 namespace NetflixClone.Infrastructure.Persistence.Configurations.Media;
 
@@ -48,6 +49,13 @@ public class StreamingSessionConfiguration : IEntityTypeConfiguration<StreamingS
         // This index must cover all three conditions.
         builder.HasIndex(ss => new { ss.ProfileId, ss.IsActive, ss.LastHeartbeatAt })
             .HasDatabaseName("IX_StreamingSessions_ProfileId_IsActive_Heartbeat");
+
+        // EpisodeId is nullable — episode deletion sets FK to null, session log is retained
+        builder.HasOne<Episode>()
+            .WithMany()
+            .HasForeignKey(ss => ss.EpisodeId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Find sessions by content (e.g. admin analytics)
         builder.HasIndex(ss => ss.ContentId);

@@ -11,7 +11,7 @@ namespace NetflixClone.Infrastructure.Persistence.Seeds;
 /// <summary>
 /// Seeds essential data that must exist before the app can be used:
 ///   1. Plans        — the 6 subscription tiers (3 tiers × 2 billing periods)
-///   2. Roles        — SuperAdmin, ContentManager, Subscriber
+///   2. Roles        — SuperAdmin, ContentManager, Subscriber, NotSubscriber
 ///   3. Admin user   — one SuperAdmin account for first login
 ///
 /// Called from Program.cs at startup (only runs if data is missing — idempotent).
@@ -42,7 +42,7 @@ public static class DatabaseSeeder
     // ── Roles ─────────────────────────────────────────────────────────
     private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
-        string[] roles = ["SuperAdmin", "ContentManager", "Subscriber"];
+        string[] roles = ["SuperAdmin", "ContentManager", "Subscriber" , "NotSubscriber"];
 
         foreach (var role in roles)
         {

@@ -1,5 +1,4 @@
 using NetflixClone.Domain.Common.Primitives;
-using NetflixClone.Domain.Common.Enums;
 
 namespace NetflixClone.Domain.Entities.Identity;
 

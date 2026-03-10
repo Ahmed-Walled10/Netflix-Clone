@@ -27,8 +27,15 @@ public class ApplicationUser : IdentityUser
 
     // ── Audit ────────────────────────────────────────────────────────
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
+
+    public string? EmailConfirmationOtp { get; set; }
+    public DateTime? EmailConfirmationOtpExpiration { get; set; }
+    public string? PasswordResetOtp { get; set; }
+    public DateTime? PasswordResetOtpExpiration { get; set; }
+    public int OtpAttempts { get; set; } = 0;
+    public DateTime? LastOtpAttemptAt { get; set; }
 
     // ── Navigation ──────────────────────────────────────────────────
     public ICollection<Profile> Profiles { get; set; } = [];

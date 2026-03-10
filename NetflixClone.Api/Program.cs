@@ -1,30 +1,102 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using NetflixClone.Domain.Entities.Identity;
-using NetflixClone.Infrastructure.Persistence;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
+using NetflixClone.Application.Services;
+using NetflixClone.Infrastructure.Mail;
 using NetflixClone.Infrastructure.Persistence.Seeds;
+using NetflixClone.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Services ──────────────────────────────────────────────────────────────
-builder.Services.AddDbContext<NetflixCloneDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+// ── Persistence (DbContext + Identity) ────────────────────────────────────
+builder.Services.AddPersistenceServices(builder.Configuration);
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<NetflixCloneDbContext>()
-    .AddDefaultTokenProviders();
+// ── MediatR ────────────────────────────────────────────────────────────────
+// Scans the Application assembly for all IRequestHandler implementations.
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(
+        typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly));
 
+// ── AutoMapper ─────────────────────────────────────────────────────────────
+builder.Services.AddAutoMapper(
+    typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly);
+
+// ── Application Services ───────────────────────────────────────────────────
+builder.Services.AddScoped<IJwtTokenGeneration, JwtTokenGeneration>();
+builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// ── JWT Bearer Authentication ──────────────────────────────────────────────
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey   = jwtSettings["SecretKey"]!;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer           = true,
+        ValidateAudience         = true,
+        ValidateLifetime         = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer              = jwtSettings["Issuer"],
+        ValidAudience            = jwtSettings["Audience"],
+        IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew                = TimeSpan.Zero   // no grace period — tokens expire exactly on time
+    };
+});
+
+// ── Controllers & Swagger ──────────────────────────────────────────────────
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Netflix Clone API", Version = "v1" });
 
-// ── Build ─────────────────────────────────────────────────────────────────
+    // Allow sending the JWT token from Swagger UI
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name         = "Authorization",
+        Type         = SecuritySchemeType.Http,
+        Scheme       = "Bearer",
+        BearerFormat = "JWT",
+        In           = ParameterLocation.Header,
+        Description  = "Enter your JWT token. Example: Bearer eyJhbGci..."
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// ── Build ──────────────────────────────────────────────────────────────────
 var app = builder.Build();
 
-// ── Seed ──────────────────────────────────────────────────────────────────
+// ── Seed ───────────────────────────────────────────────────────────────────
 // Runs migrations and seeds essential data (roles, plans, admin, genres, persons).
 // Idempotent — safe to run on every restart.
 await DatabaseSeeder.SeedAsync(app.Services);
 
-// ── Middleware ────────────────────────────────────────────────────────────
+// ── Middleware ─────────────────────────────────────────────────────────────
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

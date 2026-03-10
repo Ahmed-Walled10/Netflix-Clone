@@ -29,6 +29,11 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
             .HasConversion<string>()
             .HasMaxLength(20);
 
+        builder.Property(p => p.MaxVideoQuality)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.Property(p => p.StripePriceId)
             .HasMaxLength(256);
 

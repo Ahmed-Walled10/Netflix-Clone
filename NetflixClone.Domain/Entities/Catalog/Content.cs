@@ -66,7 +66,8 @@ public class Content : AuditableEntity
     /// Recalculated by a domain event whenever a rating is added, changed, or removed.
     /// Scale: 0.0 – 5.0
     /// </summary>
-    public decimal AverageRating => TotalRatings == 0 ? 0 : (Decimal)Ratings.Sum(r => r.Value) / (TotalRatings * 5);
+    /// <remarks>Requires <c>.Include(c => c.Ratings)</c> to be loaded, otherwise returns 0.</remarks>
+    public decimal AverageRating => TotalRatings == 0 || !Ratings.Any() ? 0 : (decimal)Ratings.Sum(r => r.Value) / TotalRatings;
 
     /// <summary>Total number of ratings submitted. Used alongside AverageRating.</summary>
     public int TotalRatings { get; set; } = 0;

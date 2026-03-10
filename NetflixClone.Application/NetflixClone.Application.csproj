@@ -11,13 +11,40 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Authentication\Commands\RefreshToken\" />
+    <Folder Include="Features\Content-genres\Commands\CreateGenre\" />
+    <Folder Include="Features\Content-genres\Commands\DeleteGenre\" />
+    <Folder Include="Features\Content-genres\Commands\UpdateGenre\" />
+    <Folder Include="Features\Content-genres\Queries\GetGenres\" />
+    <Folder Include="Features\Content\Commands\MakeContentAvailable\" />
+    <Folder Include="Features\Content\Commands\CreateContent\" />
+    <Folder Include="Features\Content\Commands\DeleteContent\" />
+    <Folder Include="Features\Content\Commands\UpdateContent\" />
+    <Folder Include="Features\Content\Queries\GetAllContent\" />
+    <Folder Include="Features\Content\Queries\GetContentById\" />
+    <Folder Include="Features\Content\Queries\GetTrendingContent\" />
+    <Folder Include="Features\Engagement\Commands\AddRating\" />
+    <Folder Include="Features\Engagement\Commands\DeleteRating\" />
+    <Folder Include="Features\Engagement\Queries\GetWatchHistory\" />
+    <Folder Include="Features\Engagement\Queries\GetRatings\" />
+    <Folder Include="Features\Invoices\Commands\CreateInvoice\" />
+    <Folder Include="Features\Profiles\Commands\CreateProfile\" />
+    <Folder Include="Features\Profiles\Commands\DeleteProfile\" />
+    <Folder Include="Features\Profiles\Commands\UpdateProfile\" />
+    <Folder Include="Features\Profiles\Queries\GetProfiles\" />
+    <Folder Include="Features\Subscription-Plans\Commands\" />
+    <Folder Include="Features\Subscription-Plans\Queries\GetPlans\" />
+    <Folder Include="Features\Subscriptions\Commands\UpgradePlan\" />
+    <Folder Include="Features\Subscriptions\Commands\SubscripePlan\" />
+    <Folder Include="Features\Subscriptions\Queries\GetMySubscription\" />
   </ItemGroup>
 
 </Project>
