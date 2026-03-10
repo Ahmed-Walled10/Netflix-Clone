@@ -8,10 +8,10 @@
 ![Redis](https://img.shields.io/badge/Redis-Caching-DC382D?style=for-the-badge&logo=redis)
 ![Azure](https://img.shields.io/badge/Azure_Blob-Storage-0078D4?style=for-the-badge&logo=microsoftazure)
 ![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?style=for-the-badge&logo=stripe)
-![MediatR](https://img.shields.io/badge/MediatR-CQRS-00C49F?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Phase_2_In_Progress-F59E0B?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-MVP_In_Progress-F59E0B?style=for-the-badge)
 
 A **production-grade Netflix backend clone** built with ASP.NET 9, Clean Architecture, CQRS, and real-world patterns used in professional streaming platforms.
+
 
 [MVP Scope](#-mvp-scope) • [Architecture](#️-architecture) • [Tech Stack](#️-tech-stack) • [API Docs](#-api-endpoints) • [Progress](#-build-progress) • [Getting Started](#-getting-started)
 
@@ -20,28 +20,26 @@ A **production-grade Netflix backend clone** built with ASP.NET 9, Clean Archite
 ---
 
 ## 🎯 MVP Scope
-
 The MVP strips the full project bible down to what actually matters for a first working version — enough to demonstrate real-world patterns without over-engineering.
 
 | Feature | MVP Approach | Status |
 |---|---|---|
-| JWT Authentication | Register → OTP Email Verify → Login → Refresh Token → Logout | 🔄 In Progress |
-| Multi-Profile Support | Up to N profiles per plan, age attribute, optional PIN, preferences | 🔜 Next |
-| Stripe Subscriptions | Plans by profile count & billing period, Stripe Checkout, invoices by email | 🔜 Next |
+| JWT Authentication | Register → Verify Email → Login → Refresh Token → Logout | ✅ Done |
+| Multi-Profile Support | Up to N profiles per plan, age attribute, optional PIN, preferences | ✅ Done |
+| Stripe Subscriptions | Plans by profile count & billing period, Stripe Checkout, invoices by email | 🔄 In Progress |
 | Video Streaming | Simplified: direct MP4 SAS URLs from Azure Blob, concurrency enforcement | 🔜 Next |
 | Media Pipeline | Admin uploads → Azure Blob → store URL → mark ready. No FFmpeg | 🔜 Next |
 | Full-Text Search | SQL Server FTS on Title, Description, Cast | 🔜 Next |
-| Engagement | Watch history, continue watching, ratings | 🔜 Next |
+| Engagement | Watch history, continue watching, thumb ratings — add after core is done | 🔄 In Progress |
 | Trending | ViewCount++ on every stream start + daily Hangfire snapshot | 🔜 Next |
-| Role-Based Access | NotSubscriber \| Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔄 In Progress |
-| Email Flows | OTP-based confirm email, reset password (via Brevo SMTP) | 🔄 In Progress |
+| Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔜 Next |
+| Email Flows | Confirm email, reset password, reset PIN, send invoice | ✅ Done |
 
 > 💡 **MVP Philosophy:** Build it working first. Add complexity later. Each phase is independently shippable.
 
 ---
 
 ## ✨ Features (Full Vision — Post-MVP)
-
 > These features are planned for **after the MVP is complete**, as defined in the Project Bible.
 
 - 🔐 **JWT Authentication** — Access tokens (15 min) + refresh tokens (30 days) with rotation
@@ -50,29 +48,28 @@ The MVP strips the full project bible down to what actually matters for a first 
 - 🎥 **Video Streaming** — HLS manifest delivery, concurrent stream enforcement per plan, heartbeat sessions
 - 📼 **Media Pipeline** — Azure Blob pre-signed uploads → Hangfire encoding jobs → multi-resolution variants
 - 🔍 **Full-Text Search** — SQL Server FTS on titles, descriptions & cast with autocomplete
-- 📋 **Engagement** — Watch history, continue watching, My List, ratings, reviews & likes
+- 📋 **Engagement** — Watch history, continue watching, My List, ratings (ThumbUp / Double Thumb), reviews & likes
 - 🤖 **Recommendations** — Rule-based scoring engine (genre match + cast + rating + recency), pre-computed daily by Hangfire, cached in Redis
 - 📈 **Trending** — Daily/Weekly/Monthly snapshots refreshed by background jobs
 - 🔔 **Notifications** — In-app notifications for billing events, new content & profile alerts
-- 🛡️ **Role-Based Access** — SuperAdmin, ContentManager, Subscriber, NotSubscriber
-- 📧 **Email Flows** — OTP verification, password reset, invoice receipts, payment failure alerts
+- 🛡️ **Role-Based Access** — SuperAdmin, ContentManager, SupportAgent, Subscriber
+- 📧 **Email Flows** — Verification, password reset, PIN reset, invoice receipts, payment failure alerts
 
 ---
 
 ## 🏗️ Architecture
-
 This project follows **Clean Architecture** with strict layer separation:
 
 ```
 src
  ├── API
- │    └── NetflixClone.Api              → Controllers, Middleware, DI wiring
+ │    └── NetflixClone.Api          → Minimal API endpoints, Middleware, DI wiring
  ├── Core
- │    ├── NetflixClone.Application      → CQRS (Commands/Queries), DTOs, Interfaces, Services
- │    └── NetflixClone.Domain           → Entities, Enums, Base Primitives
+ │    ├── NetflixClone.Application  → Use Cases (CQRS), DTOs, Interfaces, Validators
+ │    └── NetflixClone.Domain       → Entities, Value Objects, Domain Events, Aggregates
  └── Infrastructure
-      ├── NetflixClone.Infrastructure   → Email (MailKit/Brevo), External Services
-      └── NetflixClone.Persistence      → NetflixCloneDbContext, EF Configs, Migrations, Seeds
+      ├── NetflixClone.Infrastructure → Repos, External Services, Hangfire
+      └── NetflixClone.Persistence    → NetflixCloneDbContext, EF configurations, migrations
 
 tests
 ├── NetflixClone.Domain.Tests
@@ -83,41 +80,39 @@ tests
 ### Layer Rules
 - **Domain** has zero external dependencies
 - **Application** depends only on Domain; defines interfaces implemented by Infrastructure
-- **Infrastructure** implements Application interfaces (MailKit, Azure SDK, Stripe SDK, Redis)
+- **Infrastructure** implements Application interfaces (EF Core, Azure SDK, Stripe SDK, Redis)
 - **API** references Application only — no domain logic in endpoints
 - All cross-cutting concerns (logging, validation, caching) handled via **MediatR pipeline behaviors**
 
 ### Bounded Contexts
-
 | Context | Core Entities |
 |---|---|
-| 🔐 Identity | ApplicationUser, Profile, ProfilePreference, RefreshToken |
+| 🔐 Identity | Account, Profile, RefreshToken, Role |
 | 💳 Subscription | Plan, Subscription, Invoice, PaymentMethod |
-| 🎬 Catalog | Content, Season, Episode, Genre, Person, ContentGenre, ContentPerson |
-| 📼 Media | StreamingSession |
+| 🎬 Catalog | Content, Season, Episode, Genre, Person |
+| 📼 Media | VideoAsset, StreamingSession |
 | ❤️ Engagement | WatchHistory, Rating |
+| 📈 Discovery | TrendingSnapshot |
+| 🔔 Notification | Notification *(post-MVP)* |
 
 ---
 
 ## 🛠️ Tech Stack
-
 | Concern | Choice | Notes |
 |---|---|---|
-| Framework | ASP.NET 9 | Controllers + Middleware |
-| ORM | EF Core 9 (Code-First) | Migrations, Fluent API configurations |
+| Framework | ASP.NET 9 Minimal APIs | Modern, performant |
+| ORM | EF Core 9 (Code-First) | Migrations, owned types |
 | CQRS | MediatR 12 | Commands, Queries, Notifications |
-| Mapping | AutoMapper | Entity ↔ Request/Response mapping |
-| Auth | ASP.NET Identity + JWT | Identity roles, 15-min access tokens |
-| Refresh Tokens | Custom rotation | SHA-256 hashed, 30-day, device-aware |
-| OTP | Custom secure OTP | `RandomNumberGenerator` (cryptographically safe) |
-| Email | MailKit + Brevo SMTP | OTP confirmation, password reset — HTML templates |
-| Caching | Redis (StackExchange.Redis) | Trending, recommendations, rate limits *(planned)* |
+| Validation | FluentValidation | Application layer pipeline |
+| Auth | JWT + Refresh Tokens | 15-min access / 30-day refresh with rotation |
+| Caching | Redis (StackExchange.Redis) | Trending, recommendations, rate limits |
 | Storage | Azure Blob Storage | Videos, images (MVP: direct MP4 URL) |
-| Background Jobs | Hangfire | Trending snapshot, session cleanup *(planned)* |
-| Search | SQL Server Full-Text Search | FTS on Title, Description, Cast *(planned)* |
-| Payments | Stripe Checkout (test mode) | Subscriptions, invoices, webhooks *(planned)* |
+| Background Jobs | Hangfire | Trending snapshot, session cleanup |
+| Search | SQL Server Full-Text Search | FTS on Title, Description, Cast |
+| Payments | Stripe Checkout (test mode) | Subscriptions, invoices, webhooks |
+| Email | SendGrid / Resend | Verification, invoices, alerts |
 | Testing | xUnit + Moq + Testcontainers | Unit + integration tests |
-| Docs | Swagger / Scalar | Auto-generated API docs |
+| Docs | Scalar / Swagger | Auto-generated API docs |
 
 ---
 
@@ -128,15 +123,16 @@ tests
 <details>
 <summary><strong>🔐 Auth — /api/auth</strong></summary>
 
-| Method | Route | Auth | Description |
-|---|---|---|---|
-| POST | `/register` | ❌ Public | Create account → sends OTP email → returns JWT (`NotSubscriber` role) |
-| POST | `/verify-email` | ✅ JWT | Submit 6-digit OTP to confirm email |
-| POST | `/login` | ❌ Public | Validate credentials → returns JWT with user roles |
-| POST | `/refresh` | ❌ Public | Rotate refresh token, return new access token |
-| POST | `/logout` | ✅ JWT | Revoke refresh token |
-| POST | `/forgot-password` | ❌ Public | Send OTP password reset email |
-| POST | `/reset-password` | ❌ Public | Reset password with OTP |
+| Method | Route | Description |
+|---|---|---|
+| POST | `/register` | Create account + send verification email |
+| POST | `/verify-email` | Confirm email with OTP |
+| POST | `/resend-confirmation` | Resend email confirmation OTP |
+| POST | `/login` | Returns access JWT + sets refresh token cookie |
+| POST | `/refresh` | Rotate refresh token, return new access token |
+| POST | `/logout` | Revoke refresh token |
+| POST | `/forgot-password` | Send password reset email (1h token) |
+| POST | `/reset-password` | Reset password with token |
 
 </details>
 
@@ -165,6 +161,7 @@ tests
 |---|---|---|
 | GET | `/plans` | List available plans (public) |
 | POST | `/checkout` | Create Stripe Checkout session, return URL |
+| POST | `/upgrade` | Upgrade current plan |
 | GET | `/me` | Get current subscription details |
 | PUT | `/cancel` | Set CancelAtPeriodEnd=true |
 | GET | `/invoices` | Get billing history |
@@ -178,16 +175,19 @@ tests
 | Method | Route | Description |
 |---|---|---|
 | GET | `/` | Browse content (paginated, filtered) |
-| GET | `/{slug}` | Get content detail by slug |
+| GET | `/{id}` | Get content detail by ID |
 | GET | `/genres` | List all genres |
-| GET | `/genres/{slug}` | Browse content by genre |
+| GET | `/trending` | Trending content (from ViewCount snapshots) |
 | GET | `/new-releases` | Recently added content |
-| GET | `/trending?period=Weekly` | Trending content (cached from snapshots) |
 | POST | `/admin` | [ContentManager] Create movie/series/documentary |
 | PUT | `/admin/{id}` | [ContentManager] Update content |
 | DELETE | `/admin/{id}` | [ContentManager] Soft-delete content |
+| PATCH | `/admin/{id}/publish` | [ContentManager] Toggle IsAvailable |
 | POST | `/admin/{id}/seasons` | [ContentManager] Add season to series |
 | POST | `/admin/seasons/{id}/episodes` | [ContentManager] Add episode |
+| POST | `/genres` | [ContentManager] Create genre |
+| PUT | `/genres/{id}` | [ContentManager] Update genre |
+| DELETE | `/genres/{id}` | [ContentManager] Delete genre |
 
 </details>
 
@@ -224,21 +224,22 @@ tests
 </details>
 
 <details>
-<summary><strong>❤️ Engagement — /api</strong></summary>
+<summary><strong>❤️ Engagement — /api (Optional Phase)</strong></summary>
 
 | Method | Route | Description |
 |---|---|---|
 | GET | `/history` | Get watch history for active profile |
 | GET | `/continue-watching` | Get incomplete content ordered by last watched |
 | PUT | `/history/{contentId}` | Upsert watch progress |
-| POST | `/ratings/{contentId}` | Rate content (1–5 stars) |
+| POST | `/ratings/{contentId}` | Rate content (ThumbUp / ThumbDown / DoubleThumbUp) |
 | DELETE | `/ratings/{contentId}` | Remove rating |
+| GET | `/ratings` | Get all ratings for active profile |
 
 </details>
 
 ---
 
-### Post-MVP Endpoints *(planned)*
+### Post-MVP Endpoints *(planned for after MVP is complete)*
 
 <details>
 <summary><strong>🤖 Discovery — /api/discover</strong></summary>
@@ -276,13 +277,18 @@ tests
 
 ## 📋 Subscription Plans
 
-| Plan | Profiles | Max Quality | Monthly | Yearly |
+### MVP Plans
+| Plan | Profiles | Concurrent Streams | Monthly | Yearly |
 |---|---|---|---|---|
-| Basic | 1 | HD 720p | $8.99 | $89.99 |
-| Standard | 3 | Full HD 1080p | $13.99 | $139.99 |
-| Premium | 5 | 4K UHD | $17.99 | $179.99 |
+| Basic | 1 | 1 | $8.99 | $89.99 |
+| Standard | 3 | 2 | $13.99 | $139.99 |
+| Premium | 5 | 4 | $17.99 | $179.99 |
 
-> Plans are seeded at startup with stable GUIDs — idempotent, safe to re-run on every restart.
+### Post-MVP Additions
+- Download support (Standard: 2 devices, Premium: 4 devices)
+- 4K + HDR quality cap per plan
+- Plan upgrade (immediate + prorated) / downgrade (next cycle)
+- Dunning logic — retry 3×, then suspend
 
 ---
 
@@ -299,70 +305,60 @@ tests
 - [x] EF Core 9 setup with SQL Server
 - [x] `NetflixCloneDbContext` with full entity registration
 - [x] `NetflixCloneDbContextFactory` for design-time EF Core tooling
-- [x] EF Core Fluent API configurations for all bounded contexts:
-  - [x] Identity — `ApplicationUser`, `Profile`, `ProfilePreference`, `RefreshToken`
-  - [x] Subscriptions — `Plan`, `Subscription`, `Invoice`, `PaymentMethod`
-  - [x] Catalog — `Content`, `Season`, `Episode`, `Genre`, `Person`, `ContentGenre`, `ContentPerson`
-  - [x] Media — `StreamingSession` (with nullable `EpisodeId` FK)
-  - [x] Engagement — `WatchHistory`, `Rating`
-- [x] Base primitives — `BaseEntity` (Guid PK), `AuditableEntity` (CreatedAt, UpdatedAt)
-- [x] Domain enums — `VideoQuality`, `MaturityRating`, `SubscriptionStatus`, `BillingPeriod`, `ContentType`, `PersonRole`, `PaymentAttemptStatus`
-- [x] `JwtSettings` strongly-typed config class
-- [x] Data seeding (idempotent, stable GUIDs):
-  - [x] `GenreSeeder` — 25 genres seeded
-  - [x] `PersonSeeder` — 16 directors & actors seeded
-  - [x] `DatabaseSeeder` — Plans (6 tiers), Roles (SuperAdmin, ContentManager, Subscriber, NotSubscriber), Admin user
+- [x] EF Core Fluent API configurations for all bounded contexts
+- [x] Base entity interfaces (`IAuditableEntity`, `ISoftDeletable`)
+- [x] Domain entities — Identity, Subscriptions, Catalog, Media, Engagement
+- [x] `VideoQuality` enum + `MaturityRating`, `SubscriptionStatus` enums
+- [x] `StreamingSession` entity
+- [x] Data seeding — Genres, Persons, initial seed structure
 - [x] Initial EF Core migration generated
-- [x] Repository contract (`IBaseRepository<T>`) in Application layer
-- [x] `appsettings.json` configured (SQL Server, Redis, JwtSettings)
+- [x] Repository contract (`IBaseRepository`) in Application layer
+- [x] `appsettings.json` configured with connection string
+- [x] `Program.cs` updated to register Persistence services
 - [ ] Global exception handling middleware
 - [ ] MediatR pipeline (logging, validation, caching behaviors)
 
 ---
 
-### Phase 2 — Identity & Authentication 🔄 In Progress
-> Register, Login, JWT, Refresh Tokens, OTP Email Verification, Profiles CRUD
+### Phase 2 — Identity ✅
+> Register, Login, JWT, Refresh tokens, Email verification, Profiles CRUD
 
-#### ✅ Completed
-- [x] **`RegisterRequestHandler`** — Create account, generate OTP, send confirmation email, return JWT (`NotSubscriber` role)
-- [x] **`LoginRequestHandler`** — Validate credentials, check email confirmed / IsActive / IsSuspended, return JWT with roles
-- [x] **`JwtTokenGeneration` service** — Generates HS256 JWT with `sub`, `jti`, `NameIdentifier`, `Name`, `Email`, `Role` claims; reads from `JwtSettings` config section
-- [x] **`OtpService`** — Cryptographically secure 6-digit OTP via `RandomNumberGenerator`; expiry validation
-- [x] **`EmailService`** (MailKit + Brevo SMTP) — Polished HTML email templates for:
-  - [x] Email confirmation OTP
-  - [x] Password reset OTP
-- [x] **Contracts** — `IJwtTokenGeneration`, `IOtpService`, `IEmailService`
-- [x] **Role system** — `NotSubscriber` assigned on register; `Subscriber` assigned after plan purchase
-- [x] **Security guards in Login** — Inactive accounts (`IsActive=false`) and suspended accounts (`IsSuspended=true`) are blocked
-
-#### 🔜 Remaining
-- [ ] `VerifyEmailCommandHandler` — Validate OTP, mark `EmailConfirmed=true`, clear OTP fields
-- [ ] `RefreshTokenCommandHandler` — Rotate refresh token (SHA-256 hashed, stored in DB)
-- [ ] `LogoutCommandHandler` — Revoke refresh token
-- [ ] `ForgotPasswordCommandHandler` — Generate password reset OTP + send email
-- [ ] `ResetPasswordCommandHandler` — Validate OTP, update password, clear OTP fields
-- [ ] AutoMapper profile — `RegisterRequest → ApplicationUser`
-- [ ] `Program.cs` — Register MediatR, AutoMapper, JWT Bearer auth, OtpService, EmailService, JwtTokenGeneration
-- [ ] Profiles CRUD (max enforced by `Plan.MaxProfiles`)
+- [x] Account registration
+- [x] Email confirmation via OTP flow
+- [x] Resend email confirmation OTP
+- [x] JWT access token generation (15 min)
+- [x] Refresh token issuance + rotation (30 days, HttpOnly cookie)
+- [x] Logout (token revocation)
+- [x] Forgot password (send reset email with 1h token)
+- [x] Reset password with token
+- [x] Profiles CRUD — Create, Update, Delete, Get all profiles
+  - Plan `MaxProfiles` enforcement wired in profile creation
 - [ ] Profile switching (new JWT with `profileId` claim)
 - [ ] Kids mode auto-set when age < 13
 - [ ] Optional PIN (BCrypt-hashed, required on switch if set)
 - [ ] Profile preferences (Genre / Actor / Director)
+- [ ] Role-based authorization (`SuperAdmin`, `ContentManager`, `Subscriber`)
 
 ---
 
-### Phase 3 — Subscriptions & Billing 🔜
+### Phase 3 — Subscriptions & Billing 🔄
 > Stripe Checkout, subscription lifecycle, invoices, webhooks
 
+- [x] Subscription plan listing (`GetPlans` query)
+- [x] Subscribe to a plan (`SubscribePlan` command)
+- [x] Upgrade plan (`UpgradePlan` command)
+- [x] Get current subscription details (`GetMySubscription` query)
+- [x] Create invoice (`CreateInvoice` command)
+- [ ] Seed Plans table (Basic / Standard / Premium — monthly & yearly)
 - [ ] Stripe Customer creation after email verification
 - [ ] Subscribe via Stripe Checkout session (hosted page, no card data on server)
+- [ ] 30-day free trial support
 - [ ] Stripe webhook handler:
   - `checkout.session.completed` → create Subscription + send invoice email
   - `invoice.payment_succeeded` → mark Invoice paid, send receipt
   - `invoice.payment_failed` → increment attempt, suspend after 3 failures
   - `customer.subscription.deleted` → set Status=Canceled
   - `customer.subscription.updated` → handle plan change
-- [ ] Role upgrade: `NotSubscriber` → `Subscriber` after checkout complete
 - [ ] Cancel subscription (`CancelAtPeriodEnd=true`)
 - [ ] Invoice history endpoint
 
@@ -372,22 +368,26 @@ tests
 > Plan limits on profiles, role enforcement on endpoints
 
 - [ ] Enforce `Plan.MaxProfiles` on profile creation
-- [ ] Require active subscription for streaming (`[Authorize(Roles = "Subscriber")]`)
+- [ ] Require active subscription for streaming
 - [ ] Role-based authorization on all endpoints
+- [ ] Seed SuperAdmin account
 
 ---
 
-### Phase 5 — Content Catalog 🔜
+### Phase 5 — Content Catalog 🔄
 > Admin CRUD for Movies/Series/Documentaries, Genres, Persons
 
-- [ ] Content CRUD (Movie, Series, Documentary)
+- [x] Content CRUD — Create, Update, Delete (soft), MakeAvailable (publish toggle)
+- [x] `GetAllContent` — paginated browse endpoint
+- [x] `GetContentById` — content detail endpoint
+- [x] `GetTrendingContent` — trending query
+- [x] Genre management — Create, Update, Delete genres
 - [ ] Season + Episode CRUD
-- [ ] Genre management (already seeded)
 - [ ] Person (cast/crew) management (already seeded)
 - [ ] Maturity ratings enforcement
-- [ ] Content browse endpoint (paginated, filterable by genre/year/type)
+- [ ] Content browse by genre (filterable)
 - [ ] Slug-based content detail endpoint
-- [ ] New Releases endpoint (`CreatedAt DESC`)
+- [ ] New Releases endpoint (`AvailableFrom DESC`)
 
 ---
 
@@ -432,26 +432,31 @@ tests
 
 ---
 
-### Phase 10 — Engagement 🔜
+### Phase 10 — Engagement 🔄
 > Watch history, Continue Watching, Ratings
 
-- [ ] Watch progress upsert on stream end (`StoppedAtSeconds`)
+- [x] Add rating (ThumbUp / ThumbDown / DoubleThumbUp)
+- [x] Delete rating
+- [x] Get ratings for active profile
+- [x] Get watch history
+- [ ] Watch progress upsert on stream end (`StoppedAtSeconds`, `TotalDurationSeconds`)
 - [ ] Auto-complete at 90% watched (`IsCompleted=true`)
 - [ ] Continue Watching query (incomplete, ordered by `WatchedAt DESC`)
-- [ ] Ratings — 1–5 star scale (one per profile per content, `AverageRating` updated on change)
+- [ ] Re-watch reset logic
+- [ ] Rating change triggers `AverageRating` recalculation
 
 ---
 
 ## 🔵 Post-MVP Roadmap *(Full Project Bible)*
-
 > These features are out of scope for the MVP but are fully designed and planned.
 
 ### Advanced Streaming
 - [ ] HLS manifest delivery (replace direct MP4 URLs)
 - [ ] FFmpeg-based multi-resolution encoding pipeline (360p → 4K)
 - [ ] `EncodingJob` status tracking + retry logic (max 3 attempts)
+- [ ] `VideoVariant` records per resolution
 - [ ] Subtitle track upload & storage
-- [ ] Quality cap enforcement per plan (720p / 1080p / 4K)
+- [ ] Quality cap enforcement per plan (1080p / 4K)
 - [ ] Download support (Standard: 2 devices, Premium: 4 devices)
 
 ### Plan Upgrades & Dunning
@@ -463,6 +468,7 @@ tests
 - [ ] Rule-based scoring: `(genreMatch × 0.4) + (castMatch × 0.2) + (rating × 0.2) + (recency × 0.2)`
 - [ ] Hangfire daily job: compute + upsert `RecommendationScores` per profile
 - [ ] "Because You Watched" — same genres + overlapping cast
+- [ ] "Top Picks" — highest rated in most-watched genres
 - [ ] Redis caching of top-N recommendations per profile (TTL: 1h)
 
 ### Reviews & Social
@@ -472,10 +478,12 @@ tests
 ### Notifications
 - [ ] In-app notifications (billing success/failure, new content, profile alerts)
 - [ ] Mark notifications as read
+- [ ] New content notification on `IsAvailable` toggle
 
 ### Admin & Moderation
 - [ ] Admin dashboard stats (total users, active subscriptions, revenue)
 - [ ] Content moderation (review soft-delete by admin)
+- [ ] `SupportAgent` role for user management
 - [ ] `PaymentMethod` management endpoints
 
 ---
@@ -483,51 +491,34 @@ tests
 ## 🚀 Getting Started
 
 ### Prerequisites
-
 - [.NET 9 SDK](https://dotnet.microsoft.com/download)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server) (or Docker)
-- [Redis](https://redis.io/) (or Docker) *(for Phase 9+)*
-- [Azure Storage Account](https://azure.microsoft.com/en-us/products/storage/blobs/) *(for Phase 6+)*
-- [Stripe Account](https://stripe.com/) (test mode keys) *(for Phase 3+)*
-- A [Brevo](https://www.brevo.com/) account (or any SMTP provider) for email
+- [Redis](https://redis.io/) (or Docker)
+- [Azure Storage Account](https://azure.microsoft.com/en-us/products/storage/blobs/) (or Azurite emulator)
+- [Stripe Account](https://stripe.com/) (test mode keys)
+- SendGrid or [Resend](https://resend.com/) account (for email)
 
 ### Setup
-
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/netflix-clone.git
-cd netflix-clone/Backend-Netflix-CLone/Netflix-Clone
+git clone https://github.com/Ahmed-Walled10/Netflix-Clone.git
+cd Netflix-Clone/Backend-Netflix-CLone/Netflix-Clone
 
 # Restore dependencies
 dotnet restore
-```
 
-Add the following to `appsettings.json` (or use User Secrets):
+# Configure user secrets (run from NetflixClone.Api project dir)
+dotnet user-secrets set "ConnectionStrings:Default" "Server=.;Database=NetflixClone;Trusted_Connection=True"
+dotnet user-secrets set "Jwt:Secret" "your-256-bit-secret-key-here"
+dotnet user-secrets set "Jwt:Issuer" "NetflixClone"
+dotnet user-secrets set "Jwt:Audience" "NetflixClone"
+dotnet user-secrets set "Stripe:SecretKey" "sk_test_..."
+dotnet user-secrets set "Stripe:WebhookSecret" "whsec_..."
+dotnet user-secrets set "Azure:BlobConnectionString" "DefaultEndpointsProtocol=https;..."
+dotnet user-secrets set "Azure:ContainerName" "netflix-videos"
+dotnet user-secrets set "Redis:ConnectionString" "localhost:6379"
+dotnet user-secrets set "Email:ApiKey" "SG.xxxx"
 
-```json
-{
-  "ConnectionStrings": {
-    "Default": "Server=.;Database=NetflixCloneDb;Trusted_Connection=True;TrustServerCertificate=True"
-  },
-  "JwtSettings": {
-    "SecretKey": "your-256-bit-secret-key-here",
-    "Issuer": "NetflixCloneApi",
-    "Audience": "NetflixCloneClient",
-    "AccessTokenExpiryMinutes": 15,
-    "RefreshTokenExpiryDays": 30
-  },
-  "EmailSettings": {
-    "SmtpServer": "smtp-relay.brevo.com",
-    "SmtpPort": "587",
-    "SmtpUsername": "your-brevo-login@email.com",
-    "SmtpPassword": "your-brevo-smtp-key",
-    "SenderName": "Netflix Clone",
-    "SenderEmail": "noreply@yourdomain.com"
-  }
-}
-```
-
-```bash
 # Apply database migrations
 dotnet ef database update --project NetflixClone.Persistence --startup-project NetflixClone.Api
 
@@ -535,31 +526,17 @@ dotnet ef database update --project NetflixClone.Persistence --startup-project N
 dotnet run --project NetflixClone.Api
 ```
 
-> On first startup, `DatabaseSeeder` automatically runs migrations and seeds: **6 plans**, **4 roles**, **1 admin account**, **25 genres**, and **16 persons**.
-
-### Default Admin Account
-
-| Field | Value |
-|---|---|
-| Email | `admin@netflixclone.dev` |
-| Password | `Admin@123456!` |
-| Role | `SuperAdmin` |
-
-> ⚠️ **Change this password immediately after first login!** In production, load credentials from environment variables.
-
 ### Docker *(coming after MVP)*
-
 ```bash
 docker-compose up -d
 ```
 
 API will be available at `https://localhost:5001`  
-Swagger API docs at `https://localhost:5001/swagger`
+Scalar API docs at `https://localhost:5001/scalar`
 
 ---
 
 ## 🧪 Running Tests
-
 ```bash
 # Unit tests
 dotnet test NetflixClone.Domain.Tests
@@ -572,63 +549,44 @@ dotnet test NetflixClone.Integration.Tests
 ---
 
 ## 📁 Project Structure (Detailed)
-
 ```
 NetflixClone.Domain/
+├── Entities/
+│   ├── Identity/           → ApplicationUser, Profile, RefreshToken
+│   ├── Subscriptions/      → Plan, Subscription, Invoice, PaymentMethod
+│   ├── Catalog/            → Content, Season, Episode, Genre, Person
+│   ├── Media/              → StreamingSession
+│   └── Engagement/         → WatchHistory, Rating
 ├── Common/
-│   ├── Enums/              → SubscriptionStatus, MaturityRating, VideoQuality,
-│   │                         BillingPeriod, ContentType, PersonRole, PaymentAttemptStatus
-│   ├── Identity/           → JwtSettings (strongly-typed config)
-│   └── Primitives/         → BaseEntity (Guid PK), AuditableEntity (CreatedAt, UpdatedAt)
-└── Entities/
-    ├── Identity/           → ApplicationUser, Profile, ProfilePreference, RefreshToken
-    ├── Subscriptions/      → Plan, Subscription, Invoice, PaymentMethod
-    ├── Catalog/            → Content, Season, Episode, Genre, Person, ContentGenre, ContentPerson
-    ├── Media/              → StreamingSession
-    └── Engagement/         → WatchHistory, Rating
+│   ├── Enums/              → SubscriptionStatus, MaturityRating, VideoQuality, ...
+│   ├── Primitives/         → Base entity, IAuditableEntity, ISoftDeletable
+│   └── Identity/           → Value objects
 
 NetflixClone.Application/
-├── Contracts/
-│   ├── IJwtTokenGeneration.cs
-│   ├── IOtpService.cs
-│   └── Infrastructure/
-│       └── IEmailService.cs
-├── Features/
-│   └── Authentication/
-│       └── Commands/
-│           ├── Register/   → RegisterRequest, RegisterRequestHandler, RegisterResponse
-│           ├── Login/      → LoginRequest, LoginRequestHandler, LoginResponse
-│           ├── Logout/     → (🔜 in progress)
-│           └── RefreshToken/ → (🔜 in progress)
-├── Persistence/
-│   └── IBaseRepository.cs
-└── Services/
-    ├── JwtTokenGeneration.cs   → HS256 JWT generation
-    └── OtpService.cs           → Cryptographically secure 6-digit OTP
-
-NetflixClone.Infrastructure/
-└── Mail/
-    └── EmailService.cs     → MailKit + Brevo SMTP; HTML email templates for OTP flows
+├── Persistence/            → IBaseRepository (repository contracts)
+└── Features/
+    ├── Authentication/     → Register, Login, Logout, RefreshToken, ForgotPassword, ResetPassword, EmailConfirmation
+    ├── Profiles/           → CreateProfile, UpdateProfile, DeleteProfile, GetProfiles
+    ├── Subscriptions/      → SubscribePlan, UpgradePlan, GetMySubscription
+    ├── Subscription-Plans/ → GetPlans
+    ├── Invoices/           → CreateInvoice
+    ├── Content/            → CreateContent, UpdateContent, DeleteContent, MakeContentAvailable, GetAllContent, GetContentById, GetTrendingContent
+    ├── Content-genres/     → CreateGenre, UpdateGenre, DeleteGenre
+    └── Engagement/         → AddRating, DeleteRating, GetRatings, GetWatchHistory
 
 NetflixClone.Persistence/
 ├── NetflixCloneDbContext.cs
 ├── NetflixCloneDbContextFactory.cs
-├── PersistenceServiceRegistration.cs
-├── Configurations/
-│   ├── Identity/           → ApplicationUser, Profile, ProfilePreference, RefreshToken
-│   ├── Subscriptions/      → Plan, Subscription, Invoice, PaymentMethod
-│   ├── Catalog/            → Content, Season, Episode, Genre/ContentGenre, Person/ContentPerson
-│   ├── Media/              → StreamingSession (+ EpisodeId FK)
-│   └── Engagement/         → WatchHistory, Rating
+├── Configurations/         → EF Fluent API configs (Identity, Subscriptions, Catalog, Media, Engagement)
 ├── Migrations/             → EF Core migrations
-└── Seeds/
-    ├── DatabaseSeeder.cs   → Orchestrator: Plans, Roles, Admin, Genres, Persons
-    ├── GenreSeeder.cs      → 25 genres with stable GUIDs
-    └── PersonSeeder.cs     → 16 directors & actors with stable GUIDs
+└── Seeds/                  → DatabaseSeeder, GenreSeeder, PersonSeeder
+
+NetflixClone.Infrastructure/
+└── [Repositories, JWT, Azure Blob, Stripe, Redis, Hangfire, Email]
 
 NetflixClone.Api/
 ├── Program.cs              → DI wiring, middleware, endpoint registration
-└── appsettings.json        → SQL Server, JwtSettings, Redis
+└── appsettings.json        → Configuration
 
 tests/
 ├── NetflixClone.Domain.Tests/
@@ -639,7 +597,6 @@ tests/
 ---
 
 ## 📄 License
-
 This project is built as a portfolio/learning project. MIT License.
 
 ---
