@@ -20,17 +20,18 @@
 
   <ItemGroup>
     <Folder Include="Features\Authentication\Commands\RefreshToken\" />
-    <Folder Include="Features\Content-genres\Commands\CreateGenre\" />
-    <Folder Include="Features\Content-genres\Commands\DeleteGenre\" />
-    <Folder Include="Features\Content-genres\Commands\UpdateGenre\" />
-    <Folder Include="Features\Content-genres\Queries\GetGenres\" />
-    <Folder Include="Features\Content\Commands\MakeContentAvailable\" />
-    <Folder Include="Features\Content\Commands\CreateContent\" />
-    <Folder Include="Features\Content\Commands\DeleteContent\" />
-    <Folder Include="Features\Content\Commands\UpdateContent\" />
-    <Folder Include="Features\Content\Queries\GetAllContent\" />
-    <Folder Include="Features\Content\Queries\GetContentById\" />
-    <Folder Include="Features\Content\Queries\GetTrendingContent\" />
+    <Folder Include="Features\Catalog\Content-genres\Commands\CreateGenre\" />
+    <Folder Include="Features\Catalog\Content-genres\Commands\DeleteGenre\" />
+    <Folder Include="Features\Catalog\Content-genres\Commands\UpdateGenre\" />
+    <Folder Include="Features\Catalog\Content-genres\Queries\GetGenres\" />
+    <Folder Include="Features\Catalog\Content\Commands\UpdateContent\" />
+    <Folder Include="Features\Catalog\Content\Queries\GetAllContent\" />
+    <Folder Include="Features\Catalog\Content\Queries\GetContentById\" />
+    <Folder Include="Features\Catalog\Content\Queries\GetTrendingContent\" />
+    <Folder Include="Features\Catalog\Person\Commands\CreatePerson\" />
+    <Folder Include="Features\Catalog\Person\Commands\DeletePerson\" />
+    <Folder Include="Features\Catalog\Person\Commands\UpdatePerson\" />
+    <Folder Include="Features\Catalog\Person\Queries\GetPerson\" />
     <Folder Include="Features\Engagement\Commands\AddRating\" />
     <Folder Include="Features\Engagement\Commands\DeleteRating\" />
     <Folder Include="Features\Engagement\Queries\GetWatchHistory\" />
@@ -40,7 +41,9 @@
     <Folder Include="Features\Profiles\Commands\DeleteProfile\" />
     <Folder Include="Features\Profiles\Commands\UpdateProfile\" />
     <Folder Include="Features\Profiles\Queries\GetProfiles\" />
-    <Folder Include="Features\Subscription-Plans\Commands\" />
+    <Folder Include="Features\Subscription-Plans\Commands\AddPlans\" />
+    <Folder Include="Features\Subscription-Plans\Commands\AddSpecialPlans\" />
+    <Folder Include="Features\Subscription-Plans\Commands\UpdatePlans\" />
     <Folder Include="Features\Subscription-Plans\Queries\GetPlans\" />
     <Folder Include="Features\Subscriptions\Commands\UpgradePlan\" />
     <Folder Include="Features\Subscriptions\Commands\SubscripePlan\" />
