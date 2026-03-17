@@ -23,15 +23,13 @@
     <Folder Include="Features\Catalog\Content-genres\Commands\CreateGenre\" />
     <Folder Include="Features\Catalog\Content-genres\Commands\DeleteGenre\" />
     <Folder Include="Features\Catalog\Content-genres\Commands\UpdateGenre\" />
-    <Folder Include="Features\Catalog\Content-genres\Queries\GetGenres\" />
     <Folder Include="Features\Catalog\Content\Commands\UpdateContent\" />
-    <Folder Include="Features\Catalog\Content\Queries\GetAllContent\" />
     <Folder Include="Features\Catalog\Content\Queries\GetContentById\" />
-    <Folder Include="Features\Catalog\Content\Queries\GetTrendingContent\" />
+    <Folder Include="Features\Catalog\Person\Queries\GetPersonById\" />
+    <Folder Include="Features\Catalog\Queries\GetTrendingContent\" />
     <Folder Include="Features\Catalog\Person\Commands\CreatePerson\" />
     <Folder Include="Features\Catalog\Person\Commands\DeletePerson\" />
     <Folder Include="Features\Catalog\Person\Commands\UpdatePerson\" />
-    <Folder Include="Features\Catalog\Person\Queries\GetPerson\" />
     <Folder Include="Features\Engagement\Commands\AddRating\" />
     <Folder Include="Features\Engagement\Commands\DeleteRating\" />
     <Folder Include="Features\Engagement\Queries\GetWatchHistory\" />

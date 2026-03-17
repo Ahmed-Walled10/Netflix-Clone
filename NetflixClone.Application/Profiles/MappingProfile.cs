@@ -49,6 +49,26 @@ namespace NetflixClone.Application.Profiles
                 .ForMember(dest => dest.ContentPersons, opt => opt.Ignore());
 
             CreateMap<PersonEntity, CreatePersonResponse>();
+
+            CreateMap<Content, NetflixClone.Application.Features.Catalog.Queries.Common.GetCatalogResponce>();
+
+            CreateMap<Content, NetflixClone.Application.Features.Catalog.Content.Queries.GetContentById.GetContentByIdResponse>()
+                .ForMember(dest => dest.Cast, opt => opt.MapFrom(src => src.ContentPersons));
+
+            CreateMap<ContentPerson, NetflixClone.Application.Features.Catalog.Content.Queries.GetContentById.ContentCastDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Person != null ? src.Person.FullName : string.Empty))
+                .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => src.Person != null ? src.Person.Slug : string.Empty))
+                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Person != null ? src.Person.PhotoUrl : null));
+
+
+            CreateMap<PersonEntity, NetflixClone.Application.Features.Catalog.Person.Queries.GetPersonById.GetPersonByIdResponse>()
+                .ForMember(dest => dest.Work, opt => opt.MapFrom(src => src.ContentPersons));
+
+            CreateMap<ContentPerson, NetflixClone.Application.Features.Catalog.Person.Queries.GetPersonById.PersonWorkDto>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Content != null ? src.Content.Title : string.Empty))
+                .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => src.Content != null ? src.Content.Slug : string.Empty))
+                .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Content != null ? src.Content.ThumbnailUrl : null))
+                .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.Content != null ? src.Content.AverageRating : 0));
         }
     }
 }
