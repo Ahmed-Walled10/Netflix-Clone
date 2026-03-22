@@ -9,7 +9,10 @@ namespace NetflixClone.Application.Contracts
 {
     public interface IJwtTokenGeneration
     {
-        public string GenerateJwtToken(ApplicationUser user, List<string> roles);
+        string GenerateJwtToken(ApplicationUser user, List<string> roles);
+
+        string GenerateProfileJwtToken(ApplicationUser user, Profile profile, List<string> roles);
+
 
     }
 }

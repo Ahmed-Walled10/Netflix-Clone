@@ -3,7 +3,13 @@ using NetflixClone.Application.Features.Catalog.ContentGenres.Commands.CreateGen
 using NetflixClone.Application.Features.Catalog.Person.Commands.CreatePerson;
 using NetflixClone.Application.Features.Content.Commands.CreateContent;
 using NetflixClone.Application.Features.Content.Commands.UpdateContent;
+using NetflixClone.Application.Features.Engagement.Commands.AddRating;
+using NetflixClone.Application.Features.Engagement.Queries.GetMovieRatings;
+using NetflixClone.Application.Features.Engagement.Queries.GetMyMovieRating;
+using NetflixClone.Application.Features.Engagement.Queries.GetMyRatings;
+using NetflixClone.Application.Features.Engagement.Queries.GetWatchHistory;
 using NetflixClone.Domain.Entities.Catalog;
+using NetflixClone.Domain.Entities.Engagement;
 using PersonEntity = NetflixClone.Domain.Entities.Catalog.Person;
 
 namespace NetflixClone.Application.Profiles
@@ -12,6 +18,7 @@ namespace NetflixClone.Application.Profiles
     {
         public MappingProfile()
         {
+            // ── Catalog — Content (Commands) ──────────────────────────────────────
             CreateMap<CreateContentRequest, Content>()
                 .ForMember(dest => dest.Id,             opt => opt.MapFrom(_ => Guid.NewGuid()))
                 .ForMember(dest => dest.Seasons,         opt => opt.Ignore())
@@ -50,6 +57,7 @@ namespace NetflixClone.Application.Profiles
 
             CreateMap<PersonEntity, CreatePersonResponse>();
 
+            // ── Catalog — Content (Queries) ───────────────────────────────────────
             CreateMap<Content, NetflixClone.Application.Features.Catalog.Queries.Common.GetCatalogResponce>();
 
             CreateMap<Content, NetflixClone.Application.Features.Catalog.Content.Queries.GetContentById.GetContentByIdResponse>()
@@ -61,6 +69,7 @@ namespace NetflixClone.Application.Profiles
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Person != null ? src.Person.PhotoUrl : null));
 
 
+            // ── Catalog — Person (Queries) ────────────────────────────────────────
             CreateMap<PersonEntity, NetflixClone.Application.Features.Catalog.Person.Queries.GetPersonById.GetPersonByIdResponse>()
                 .ForMember(dest => dest.Work, opt => opt.MapFrom(src => src.ContentPersons));
 
@@ -69,6 +78,31 @@ namespace NetflixClone.Application.Profiles
                 .ForMember(dest => dest.Slug, opt => opt.MapFrom(src => src.Content != null ? src.Content.Slug : string.Empty))
                 .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Content != null ? src.Content.ThumbnailUrl : null))
                 .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.Content != null ? src.Content.AverageRating : 0));
+
+            // ── Engagement — Rating ───────────────────────────────────────────────
+            CreateMap<AddRatingRequest, Rating>()
+                .ForMember(dest => dest.Id,        opt => opt.MapFrom(_ => Guid.NewGuid()))
+                .ForMember(dest => dest.RatedAt,   opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.Profile,   opt => opt.Ignore())
+                .ForMember(dest => dest.Content,   opt => opt.Ignore());
+
+            CreateMap<Rating, AddRatingResponse>();
+
+            CreateMap<Rating, GetMovieRatingsResponse>()
+                .ForMember(dest => dest.UserId,      opt => opt.MapFrom(src => src.Profile != null ? src.Profile.Id : Guid.Empty))
+                .ForMember(dest => dest.UserName,    opt => opt.MapFrom(src => src.Profile != null ? src.Profile.Name : string.Empty))
+                .ForMember(dest => dest.RatingValue, opt => opt.MapFrom(src => src.Value));
+
+            CreateMap<Rating, GetMyMovieRatingResponse>();
+
+            CreateMap<Rating, GetMyRatingsResponse>()
+                .ForMember(dest => dest.ContentTitle,        opt => opt.MapFrom(src => src.Content != null ? src.Content.Title : string.Empty))
+                .ForMember(dest => dest.ContentThumbnailUrl, opt => opt.MapFrom(src => src.Content != null ? src.Content.ThumbnailUrl : null));
+
+            // ── Engagement — WatchHistory ─────────────────────────────────────────
+            CreateMap<WatchHistory, GetWatchHistoryResponse>()
+                .ForMember(dest => dest.ContentTitle,        opt => opt.MapFrom(src => src.Content != null ? src.Content.Title : string.Empty))
+                .ForMember(dest => dest.ContentThumbnailUrl, opt => opt.MapFrom(src => src.Content != null ? src.Content.ThumbnailUrl : null));
         }
     }
 }

@@ -11,9 +11,6 @@ namespace NetflixClone.Application.ResourceParameters
 {
     public class CatalogResourceParameters : BaseResourceParameters
     {
-        // ── Text Search ──────────────────────────────────────────────────
-        // Note: You can use inherited "SearchQuery" for general text search across title/description
-        public string? CatalogName { get; set; }
 
         public List<Guid>? GenreIds { get; set; }
         public List<ContentType>? ContentTypes { get; set; }
@@ -26,6 +23,8 @@ namespace NetflixClone.Application.ResourceParameters
         public List<string>? Languages { get; set; }
         public int? ReleaseYear { get; set; }
         public bool? IsOriginal { get; set; }
+
+        public bool? OrderedByRatingDesending { get; set; }
 
     }
 }
