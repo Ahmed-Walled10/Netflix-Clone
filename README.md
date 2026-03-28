@@ -29,10 +29,10 @@ The MVP strips the full project bible down to what actually matters for a first 
 | Stripe Subscriptions | Stripe Checkout → webhook creates subscription + invoice + role change + email | ✅ Done |
 | Video Streaming | Cloudinary quality-based streaming URLs, auto watch history upsert | ✅ Done |
 | Media Pipeline | Admin uploads → Cloudinary → store PublicId → build streaming URLs per quality | ✅ Done |
-| Full-Text Search | SQL Server FTS on Title, Description, Cast | 🔜 Next |
+| Full-Text Search | SQL Server FTS on Title, Description, Cast | ✅ Done |
 | Engagement | Watch history, continue watching, thumb ratings, per-movie rating queries | ✅ Done |
-| Trending | ViewCount++ on every stream start + daily Hangfire snapshot | 🔜 Next |
-| Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔜 Next |
+| Trending | ViewCount++ on every stream start + daily Hangfire snapshot | ✅ Done |
+| Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | ✅ Done |
 | Email Flows | Confirm email, reset password, reset PIN, send invoice | ✅ Done |
 | Repository Layer | All repositories implemented with EF Core (Content, Profile, Rating, Subscription, WatchHistory) | ✅ Done |
 
