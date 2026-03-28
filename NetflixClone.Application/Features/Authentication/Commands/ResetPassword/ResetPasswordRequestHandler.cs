@@ -10,13 +10,10 @@ namespace NetflixClone.Application.Features.Authentication.Commands.ResetPasswor
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOtpService _otpService;
-        private readonly ILogger<ResetPasswordRequestHandler> _logger;
-
-        public ResetPasswordRequestHandler(UserManager<ApplicationUser> userManager, IOtpService otpService, ILogger<ResetPasswordRequestHandler> logger)
+        public ResetPasswordRequestHandler(UserManager<ApplicationUser> userManager, IOtpService otpService)
         {
             _userManager = userManager;
             _otpService = otpService;
-            _logger = logger;
         }
 
         public async Task<bool> Handle(ResetPasswordRequest request, CancellationToken cancellationToken)
@@ -43,7 +40,7 @@ namespace NetflixClone.Application.Features.Authentication.Commands.ResetPasswor
 
             if (!_otpService.ValidateOtp(request.Otp, user.PasswordResetOtp, user.PasswordResetOtpExpiration))
             {
-                _logger.LogWarning("Invalid OTP attempt for email: {Email}", request.Email);
+                Console.WriteLine("OTP is Incorrect");
                 await _userManager.UpdateAsync(user);
                 return false;
             }

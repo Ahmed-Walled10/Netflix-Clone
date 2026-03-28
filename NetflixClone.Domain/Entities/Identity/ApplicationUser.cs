@@ -27,7 +27,7 @@ public class ApplicationUser : IdentityUser
 
     // ── Audit ────────────────────────────────────────────────────────
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
 
     public string? EmailConfirmationOtp { get; set; }

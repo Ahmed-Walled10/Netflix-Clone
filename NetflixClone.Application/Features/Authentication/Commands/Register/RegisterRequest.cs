@@ -1,9 +1,12 @@
 using MediatR;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NetflixClone.Application.Features.Authentication.Commands.Register
 {
-    public class RegisterRequest : IRequest<RegisterResponse>
+    public class RegisterRequest : IRequest<RegisterResponce>
     {
 
         [Required(ErrorMessage = "Full name is required")]

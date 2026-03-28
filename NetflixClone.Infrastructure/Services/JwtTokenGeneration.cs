@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace NetflixClone.Application.Services;
+namespace NetflixClone.Infrastructure.Services;
 
 public class JwtTokenGeneration : IJwtTokenGeneration
 {
@@ -19,9 +19,7 @@ public class JwtTokenGeneration : IJwtTokenGeneration
     }
     public string GenerateJwtToken(ApplicationUser user, List<string> roles)
     {
-        var activePlan = user.Subscriptions
-       .FirstOrDefault(s => s.Status == SubscriptionStatus.Active)?
-       .Plan;
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -30,9 +28,7 @@ public class JwtTokenGeneration : IJwtTokenGeneration
             new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
             new Claim(ClaimTypes.Email, user.Email!),
             new Claim("IsActive", user.IsActive.ToString()),
-            new Claim("IsSuspended", user.IsSuspended.ToString()),
-            new Claim("Subscriptions", user.Subscriptions.Any(s => s.Status == SubscriptionStatus.Active).ToString()),
-            new Claim("MaxProfiles", activePlan?.MaxProfiles.ToString() ?? "0")
+            new Claim("IsSuspended", user.IsSuspended.ToString())
         };
 
         foreach (var role in roles)

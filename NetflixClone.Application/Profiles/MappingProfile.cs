@@ -8,9 +8,12 @@ using NetflixClone.Application.Features.Engagement.Queries.GetMovieRatings;
 using NetflixClone.Application.Features.Engagement.Queries.GetMyMovieRating;
 using NetflixClone.Application.Features.Engagement.Queries.GetMyRatings;
 using NetflixClone.Application.Features.Engagement.Queries.GetWatchHistory;
+using NetflixClone.Application.Features.Profiles.Commands.CreateProfile;
+using NetflixClone.Application.Features.Profiles.Queries.GetProfiles;
 using NetflixClone.Domain.Entities.Catalog;
 using NetflixClone.Domain.Entities.Engagement;
 using PersonEntity = NetflixClone.Domain.Entities.Catalog.Person;
+using ProfileEntity = NetflixClone.Domain.Entities.Identity.Profile;
 
 namespace NetflixClone.Application.Profiles
 {
@@ -103,6 +106,18 @@ namespace NetflixClone.Application.Profiles
             CreateMap<WatchHistory, GetWatchHistoryResponse>()
                 .ForMember(dest => dest.ContentTitle,        opt => opt.MapFrom(src => src.Content != null ? src.Content.Title : string.Empty))
                 .ForMember(dest => dest.ContentThumbnailUrl, opt => opt.MapFrom(src => src.Content != null ? src.Content.ThumbnailUrl : null));
+
+            // ── Profiles — Commands ───────────────────────────────────────────────
+            CreateMap<CreateProfileRequest, ProfileEntity>()
+                .ForMember(dest => dest.UserId,            opt => opt.Ignore())
+                .ForMember(dest => dest.User,              opt => opt.Ignore())
+                .ForMember(dest => dest.Preferences,       opt => opt.Ignore())
+                .ForMember(dest => dest.WatchHistories,    opt => opt.Ignore())
+                .ForMember(dest => dest.Ratings,           opt => opt.Ignore());
+
+            // ── Profiles — Queries ────────────────────────────────────────────────
+            CreateMap<ProfileEntity, GetProfilesResponse>()
+                .ForMember(dest => dest.HasPin, opt => opt.MapFrom(src => src.PinHash != null));
         }
     }
 }

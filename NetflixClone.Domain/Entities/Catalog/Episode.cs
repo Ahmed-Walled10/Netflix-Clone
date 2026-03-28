@@ -20,6 +20,9 @@ public class Episode : AuditableEntity
     /// <summary>Direct Azure Blob MP4 URL for this episode. Null until uploaded.</summary>
     public string? VideoUrl { get; set; }
 
+    /// <summary>Cloudinary public ID of the uploaded video. Used to build quality-specific streaming URLs.</summary>
+    public string? CloudinaryPublicId { get; set; }
+
     /// <summary>False until the admin marks the episode ready for streaming.</summary>
     public bool IsAvailable { get; set; } = false;
 

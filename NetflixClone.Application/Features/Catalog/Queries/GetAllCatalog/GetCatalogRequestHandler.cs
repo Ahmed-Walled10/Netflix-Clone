@@ -3,6 +3,7 @@ using MediatR;
 using NetflixClone.Application.Features.Catalog.Queries.Common;
 using NetflixClone.Application.Persistence;
 using NetflixClone.Application.Responces;
+using Stripe;
 
 namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
 {
@@ -20,7 +21,7 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
         public async Task<PagedResult<GetCatalogResponce>> Handle(GetCatalogRequest request, CancellationToken cancellationToken)
         {
 
-            var pagedEntities = await _contentRepository.GetCatalogAsync(request.CatalogResourceParameters, cancellationToken);
+            var pagedEntities = await _contentRepository.GetCatalogAsync(request.CatalogResourceParameters,request.IsRequestedByAdmin, cancellationToken);
 
             var responseItems = _mapper.Map<List<GetCatalogResponce>>(pagedEntities.Items);
 

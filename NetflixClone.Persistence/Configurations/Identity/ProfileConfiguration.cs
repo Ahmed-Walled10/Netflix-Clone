@@ -52,11 +52,6 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
             .HasForeignKey(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(p => p.StreamingSessions)
-            .WithOne(ss => ss.Profile)
-            .HasForeignKey(ss => ss.ProfileId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         // ── Indexes ──────────────────────────────────────────────────
         // Fast lookup of all profiles for a user
         builder.HasIndex(p => p.UserId);

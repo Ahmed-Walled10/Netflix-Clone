@@ -10,7 +10,7 @@ public interface IContentRepository : IBaseRepository<Content>
     /// Retrieves a paginated list of Content matching the provided catalog parameters.
     /// This is the recommended approach for queries, keeping complex EF LINQ logic in the Persistence layer.
     /// </summary>
-    Task<PagedResult<Content>> GetCatalogAsync(CatalogResourceParameters parameters, CancellationToken cancellationToken = default);
+    Task<PagedResult<Content>> GetCatalogAsync(CatalogResourceParameters parameters,bool IsRequestedByAdmin, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Retrieves trending content based on view counts or other metrics.

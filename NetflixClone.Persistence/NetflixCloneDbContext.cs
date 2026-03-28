@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Domain.Entities.Subscriptions;
 using NetflixClone.Domain.Entities.Catalog;
-using NetflixClone.Domain.Entities.Media;
+
 using NetflixClone.Domain.Entities.Engagement;
 using SubscriptionEntity = NetflixClone.Domain.Entities.Subscriptions.Subscription;
 
@@ -36,8 +36,6 @@ namespace NetflixClone.Infrastructure.Persistence
         public DbSet<Person> Persons => Set<Person>();
         public DbSet<ContentPerson> ContentPersons => Set<ContentPerson>();
 
-        // ── Media ────────────────────────────────────────────────────────
-        public DbSet<StreamingSession> StreamingSessions => Set<StreamingSession>();
 
         // ── Engagement ───────────────────────────────────────────────────
         public DbSet<WatchHistory> WatchHistories => Set<WatchHistory>();

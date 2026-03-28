@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NetflixClone.Application\NetflixClone.Application.csproj" />
     <ProjectReference Include="..\NetflixClone.Domain\NetflixClone.Domain.csproj" />
   </ItemGroup>
 

@@ -13,8 +13,7 @@ public class RatingConfiguration : IEntityTypeConfiguration<Rating>
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.Value)
-            .IsRequired()
-            .UsePropertyAccessMode(PropertyAccessMode.PreferFieldDuringConstruction);
+            .IsRequired();
 
         builder.Property(r => r.CreatedAt)
             .IsRequired();

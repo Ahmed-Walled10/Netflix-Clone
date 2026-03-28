@@ -28,9 +28,15 @@ public class Subscription : AuditableEntity
     /// </summary>
     public bool CancelAtPeriodEnd { get; set; } = false;
 
+    ///subscription will automatically renew at the end of the billing period.
+    public bool AutoRenew { get; set; } = true;
+
     // ── Stripe ───────────────────────────────────────────────────────
     /// <summary>Stripe Subscription ID (sub_xxxx). Unique per active subscription.</summary>
     public string? StripeSubscriptionId { get; set; }
+
+    /// <summary>Stripe Customer ID (cus_xxxx) linked to the user.</summary>
+    public string? StripeCustomerId { get; set; }
 
     // ── Navigation ───────────────────────────────────────────────────
     public Identity.ApplicationUser User { get; set; } = null!;

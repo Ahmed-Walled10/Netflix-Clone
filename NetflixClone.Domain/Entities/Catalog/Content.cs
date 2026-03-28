@@ -36,6 +36,9 @@ public class Content : AuditableEntity
     /// </summary>
     public string? VideoUrl { get; set; }
 
+    /// <summary>Cloudinary public ID of the uploaded video. Used to build quality-specific streaming URLs.</summary>
+    public string? CloudinaryPublicId { get; set; }
+
     /// <summary>Direct URL to trailer video. Optional.</summary>
     public string? TrailerUrl { get; set; }
 

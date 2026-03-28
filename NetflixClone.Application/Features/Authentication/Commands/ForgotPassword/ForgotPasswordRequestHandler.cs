@@ -19,24 +19,23 @@ namespace NetflixClone.Application.Features.Authentication.Commands.ForgotPasswo
         }
         public async Task<bool> Handle(ForgotPasswordRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null || !user.EmailConfirmed)
+            var User = await _userManager.FindByEmailAsync(request.Email);
+            if (User == null || !User.EmailConfirmed)
             {
-                // Return true regardless to prevent email enumeration attacks
                 return true;
             }
 
             var otp = _otpService.GenerateOtp();
-            user.PasswordResetOtp = otp;
-            user.PasswordResetOtpExpiration = DateTime.UtcNow.AddMinutes(15);
-            var result = await _userManager.UpdateAsync(user);
+            User.PasswordResetOtp = otp;
+            User.PasswordResetOtpExpiration = DateTime.UtcNow.AddMinutes(15);
+            var result = await _userManager.UpdateAsync(User);
             if (!result.Succeeded)
             {
-                throw new Exception("Failed to save password reset OTP. Please try again.");
+                throw new Exception("Incorrect email or password");
             }
             await _emailService.SendPasswordResetOtpAsync(
-                user.Email!,
-                user.FirstName,
+                User.Email!,
+                User.FirstName,
                 otp);
 
             return true;

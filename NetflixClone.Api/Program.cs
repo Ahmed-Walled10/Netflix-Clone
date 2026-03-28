@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetflixClone.Application.Contracts;
 using NetflixClone.Application.Contracts.Infrasructure;
-using NetflixClone.Application.Services;
+using NetflixClone.Infrastructure.Services;
 using NetflixClone.Infrastructure.Mail;
 using NetflixClone.Infrastructure.Persistence.Seeds;
 using NetflixClone.Persistence;
@@ -28,6 +28,14 @@ builder.Services.AddAutoMapper(
 builder.Services.AddScoped<IJwtTokenGeneration, JwtTokenGeneration>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// ── Infrastructure (Stripe) ────────────────────────────────────────────────
+builder.Services.Configure<NetflixClone.Infrastructure.Options.StripeOptions>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddScoped<IStripeService, NetflixClone.Infrastructure.Services.StripeService>();
+
+// ── Infrastructure (Cloudinary) ────────────────────────────────────────────
+builder.Services.Configure<NetflixClone.Infrastructure.Options.CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<ICloudinaryService, NetflixClone.Infrastructure.Services.CloudinaryService>();
 
 // ── JWT Bearer Authentication ──────────────────────────────────────────────
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

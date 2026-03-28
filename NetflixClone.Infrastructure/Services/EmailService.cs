@@ -115,6 +115,76 @@ public class EmailService : IEmailService
         await SendEmailAsync(email, subject, body);
     }
 
+    public async Task SendInvoiceEmailAsync(string email, string firstName, string planName, decimal amount, string cardBrand, string cardLast4, DateTime paymentDate, DateTime periodEnd)
+    {
+        var subject = $"Your Netflix Invoice - {planName}";
+        var body = $@"
+            <!DOCTYPE html>
+         <html lang=""en"">
+         <head>
+           <meta charset=""UTF-8"" />
+           <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+           <title>Your Invoice</title>
+           <style>
+             body {{ margin: 0; padding: 0; background: #000000; font-family: Arial, sans-serif; }}
+             .wrap {{ max-width: 520px; margin: 40px auto; background: #111111; border-radius: 6px; overflow: hidden; border: 1px solid #222; }}
+             .top-bar {{ background: #E50914; height: 4px; }}
+             .body {{ padding: 40px 40px 32px; }}
+             .logo {{ font-size: 22px; font-weight: 900; color: #E50914; letter-spacing: 1px; margin-bottom: 28px; }}
+             h1 {{ font-size: 22px; color: #ffffff; margin: 0 0 12px; }}
+             p {{ font-size: 15px; color: #aaaaaa; line-height: 1.6; margin: 0 0 28px; }}
+             p strong {{ color: #ffffff; font-weight: 600; }}
+             .invoice-box {{ background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 24px 20px; margin-bottom: 24px; }}
+             .invoice-box .heading {{ font-size: 14px; color: #ffffff; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; }}
+             .invoice-box .row {{ display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 12px 0; font-size: 15px; color: #ccc; }}
+             .invoice-box .row:last-child {{ border-bottom: none; font-weight: 700; color: #fff; font-size: 18px; padding-bottom: 0; }}
+             .note {{ font-size: 13px; color: #555; border-top: 1px solid #222; padding-top: 20px; margin: 0; }}
+             .footer {{ background: #0a0a0a; padding: 16px 40px; font-size: 11px; color: #444; border-top: 1px solid #222; }}
+           </style>
+         </head>
+         <body>
+           <div class=""wrap"">
+             <div class=""top-bar""></div>
+             <div class=""body"">
+               <div class=""logo"">STREAMVAULT</div>
+               <h1>Payment Successful!</h1>
+               <p>Hi <strong>{firstName}</strong>, your payment for the <strong>{planName}</strong> plan has been processed successfully. Your subscription is now active.</p>
+               
+               <div class=""invoice-box"">
+                 <div class=""heading"">Invoice Details</div>
+                 <div class=""row"">
+                   <span>Plan</span>
+                   <span>{planName}</span>
+                 </div>
+                 <div class=""row"">
+                   <span>Payment Date</span>
+                   <span>{paymentDate:MMM dd, yyyy}</span>
+                 </div>
+                 <div class=""row"">
+                   <span>Payment Method</span>
+                   <span>{cardBrand.ToUpper()} ending in {cardLast4}</span>
+                 </div>
+                 <div class=""row"">
+                   <span>Subscription Ends</span>
+                   <span>{periodEnd:MMM dd, yyyy}</span>
+                 </div>
+                 <div class=""row"">
+                   <span>Total Charged</span>
+                   <span>${amount}</span>
+                 </div>
+               </div>
+               
+               <p class=""note"">Thank you for subscribing to StreamVault. Enjoy unlimited streaming of your favorite movies and TV shows!</p>
+             </div>
+             <div class=""footer"">© 2026 Netflix, Inc. &nbsp;·&nbsp; Privacy Policy &nbsp;·&nbsp; Help Center</div>
+           </div>
+         </body>
+         </html>
+        ";
+
+        await SendEmailAsync(email, subject, body);
+    }
+
     private async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         var emailSettings = _configuration.GetSection("EmailSettings");

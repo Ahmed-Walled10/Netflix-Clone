@@ -2,6 +2,11 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NetflixClone.Application.Contracts;
 using NetflixClone.Domain.Entities.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NetflixClone.Application.Features.Authentication.Commands.Login
 {

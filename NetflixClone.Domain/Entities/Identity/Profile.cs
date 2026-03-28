@@ -52,5 +52,5 @@ public class Profile : AuditableEntity
 
     public ICollection<Engagement.WatchHistory> WatchHistories { get; set; } = [];
     public ICollection<Engagement.Rating> Ratings { get; set; } = [];
-    public ICollection<Media.StreamingSession> StreamingSessions { get; set; } = [];
+
 }

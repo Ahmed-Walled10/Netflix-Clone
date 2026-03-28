@@ -13,8 +13,10 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+    <PackageReference Include="Stripe.net" Version="50.4.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
   </ItemGroup>
 
@@ -33,15 +35,11 @@
     <Folder Include="Features\Engagement\Commands\UpdateRating\" />
     <Folder Include="Features\Engagement\Queries\GetWatchHistory\" />
     <Folder Include="Features\Profiles\Commands\DeleteProfile\" />
-    <Folder Include="Features\Profiles\Commands\SwitchProfiles\" />
     <Folder Include="Features\Profiles\Commands\UpdateProfile\" />
     <Folder Include="Features\Profiles\Queries\GetProfiles\" />
     <Folder Include="Features\Streaming\Queries\PlayContent\" />
-    <Folder Include="Features\Subscription-Plans\Commands\AddPlans\" />
-    <Folder Include="Features\Subscription-Plans\Commands\AddSpecialPlans\" />
     <Folder Include="Features\Subscription-Plans\Commands\UpdatePlans\" />
     <Folder Include="Features\Subscriptions\Commands\UpgradePlan\" />
-    <Folder Include="Features\Subscriptions\Commands\SubscripePlan\" />
     <Folder Include="Features\Subscriptions\Queries\GetMySubscription\" />
   </ItemGroup>
 

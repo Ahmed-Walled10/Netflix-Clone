@@ -26,14 +26,15 @@ The MVP strips the full project bible down to what actually matters for a first 
 |---|---|---|
 | JWT Authentication | Register → Verify Email → Login → Refresh Token → Logout | ✅ Done |
 | Multi-Profile Support | Up to N profiles per plan, age attribute, optional PIN, preferences, profile switching | ✅ Done |
-| Stripe Subscriptions | Plans by profile count & billing period, Stripe Checkout, invoices by email | 🔄 In Progress |
-| Video Streaming | Simplified: direct MP4 SAS URLs from Azure Blob, concurrency enforcement | 🔄 In Progress |
-| Media Pipeline | Admin uploads → Azure Blob → store URL → mark ready. No FFmpeg | 🔜 Next |
+| Stripe Subscriptions | Stripe Checkout → webhook creates subscription + invoice + role change + email | ✅ Done |
+| Video Streaming | Cloudinary quality-based streaming URLs, auto watch history upsert | ✅ Done |
+| Media Pipeline | Admin uploads → Cloudinary → store PublicId → build streaming URLs per quality | ✅ Done |
 | Full-Text Search | SQL Server FTS on Title, Description, Cast | 🔜 Next |
-| Engagement | Watch history, continue watching, thumb ratings, per-movie rating queries | 🔄 In Progress |
+| Engagement | Watch history, continue watching, thumb ratings, per-movie rating queries | ✅ Done |
 | Trending | ViewCount++ on every stream start + daily Hangfire snapshot | 🔜 Next |
 | Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔜 Next |
 | Email Flows | Confirm email, reset password, reset PIN, send invoice | ✅ Done |
+| Repository Layer | All repositories implemented with EF Core (Content, Profile, Rating, Subscription, WatchHistory) | ✅ Done |
 
 > 💡 **MVP Philosophy:** Build it working first. Add complexity later. Each phase is independently shippable.
 
@@ -91,7 +92,6 @@ tests
 | 🔐 Identity | Account, Profile, ProfilePreference, RefreshToken, Role |
 | 💳 Subscription | Plan, Subscription, Invoice, PaymentMethod |
 | 🎬 Catalog | Content, Season, Episode, Genre, Person |
-| 📼 Media | VideoAsset, StreamingSession |
 | ❤️ Engagement | WatchHistory, Rating |
 | 📈 Discovery | TrendingSnapshot |
 | 🔔 Notification | Notification *(post-MVP)* |
@@ -205,9 +205,8 @@ tests
 
 | Method | Route | Description |
 |---|---|---|
-| POST | `/upload-url` | [ContentManager] Generate Azure Blob SAS upload URL |
-| POST | `/finalize` | [ContentManager] Save final video URL to Content record |
-| POST | `/upload-image` | [ContentManager] Upload thumbnail/poster to Azure Blob |
+| POST | `/upload/{contentId}` | [ContentManager] Upload video to Cloudinary + store PublicId |
+| POST | `/upload-image` | [ContentManager] Upload thumbnail/poster to Cloudinary |
 
 </details>
 
@@ -216,9 +215,7 @@ tests
 
 | Method | Route | Description |
 |---|---|---|
-| GET | `/{contentId}` | Get signed SAS URL + create session (concurrency check) |
-| POST | `/heartbeat` | Keep session alive (body: `{ sessionId }`) |
-| POST | `/{sessionId}/end` | End streaming session, update watch history |
+| GET | `/{contentId}` | Validate subscription → build Cloudinary quality URL → upsert watch history → return stream URL |
 
 </details>
 
@@ -318,11 +315,10 @@ tests
 - [x] EF Core 9 setup with SQL Server
 - [x] `NetflixCloneDbContext` with full entity registration
 - [x] `NetflixCloneDbContextFactory` for design-time EF Core tooling
-- [x] EF Core Fluent API configurations for all bounded contexts (Identity, Catalog, Subscriptions, Media, Engagement)
+- [x] EF Core Fluent API configurations for all bounded contexts (Identity, Catalog, Subscriptions, Engagement)
 - [x] Base entity interfaces (`IAuditableEntity`, `ISoftDeletable`)
-- [x] Domain entities — Identity, Subscriptions, Catalog, Media, Engagement
+- [x] Domain entities — Identity, Subscriptions, Catalog, Engagement
 - [x] `VideoQuality` enum + `MaturityRating`, `SubscriptionStatus` enums
-- [x] `StreamingSession` entity
 - [x] Data seeding — Genres, Persons, initial seed structure
 - [x] Initial EF Core migration generated
 - [x] Repository contract (`IBaseRepository`) in Application layer
@@ -357,28 +353,25 @@ tests
 
 ---
 
-### Phase 3 — Subscriptions & Billing 🔄
-> Stripe Checkout, subscription lifecycle, invoices, webhooks, Plan management
+### Phase 3 — Subscriptions & Billing ✅
+> Stripe Checkout-only flow, webhook-driven subscription creation, invoice generation + email
 
 - [x] Subscription plan listing (`GetPlans` query)
-- [x] Subscribe to a plan (`SubscribePlan` command)
-- [x] Upgrade plan (`UpgradePlan` command)
+- [x] Subscribe to a plan — simplified Checkout-only flow (`SubscribePlanRequest` → Stripe Checkout URL)
+- [x] Stripe webhook handler (`checkout.session.completed`):
+  - Creates `Subscription` record with Stripe period dates
+  - Creates `Invoice` record (amount, currency, Stripe invoice ID, PDF URL)
+  - Changes role: `NotSubscriber` → `Subscriber`
+  - Sends invoice email via `SendInvoiceEmailAsync`
 - [x] Get current subscription details (`GetMySubscription` query)
 - [x] Create plan (`AddPlans` command)
 - [x] Create special/promotional plan (`AddSpecialPlans` command)
 - [x] Update plan details (`UpdatePlans` command)
+- [x] Stripe service: `CreateOrGetCustomer`, `CreateCheckoutSession`, `ConstructWebhookEvent`
 - [ ] Seed Plans table (Basic / Standard / Premium — monthly & yearly)
-- [ ] Stripe Customer creation after email verification
-- [ ] Subscribe via Stripe Checkout session (hosted page, no card data on server)
-- [ ] 30-day free trial support
-- [ ] Stripe webhook handler:
-  - `checkout.session.completed` → create Subscription + send invoice email
-  - `invoice.payment_succeeded` → mark Invoice paid, send receipt
-  - `invoice.payment_failed` → increment attempt, suspend after 3 failures
-  - `customer.subscription.deleted` → set Status=Canceled
-  - `customer.subscription.updated` → handle plan change
 - [ ] Cancel subscription (`CancelAtPeriodEnd=true`)
 - [ ] Invoice history endpoint
+- [ ] Upgrade plan flow via Stripe
 
 ---
 
@@ -410,27 +403,26 @@ tests
 
 ---
 
-### Phase 6 — Media Upload (Simplified MVP) 🔜
-> Azure Blob SAS upload, save VideoUrl, publish toggle — no FFmpeg
+### Phase 6 — Media Upload ✅
+> Cloudinary video/image upload, store PublicId, quality-based streaming
 
-- [ ] Generate Azure Blob SAS upload URL for admin
-- [ ] Admin uploads MP4 directly to Azure Blob (no traffic through API)
-- [ ] `POST /api/media/finalize` — save `VideoUrl` on Content record
-- [ ] Thumbnail/poster image upload to Azure Blob
-- [ ] Admin flips `IsAvailable=true` to publish content
+- [x] Cloudinary integration (`ICloudinaryService` + implementation)
+- [x] Video upload to Cloudinary → store `CloudinaryPublicId` on Content
+- [x] Quality-based streaming URL generation (SD/HD/FHD/4K based on plan)
+- [ ] Thumbnail/poster image upload to Cloudinary
+- [x] Admin flips `IsAvailable=true` to publish content
 
 ---
 
-### Phase 7 — Streaming 🔄
-> SAS streaming URLs, StreamingSession concurrency, heartbeat
+### Phase 7 — Streaming ✅
+> Cloudinary quality URLs, subscription validation, automatic watch history
 
-- [x] `PlayContent` query scaffolded (Streaming feature folder)
-- [ ] `GET /api/stream/{contentId}` — concurrency check + return signed SAS URL
-- [ ] Create `StreamingSession` record on stream start
-- [ ] Increment `Contents.ViewCount` on each stream start (for trending)
-- [ ] Heartbeat endpoint — updates `LastHeartbeatAt`
-- [ ] Stream end endpoint — closes session
-- [ ] Hangfire recurring job: clean stale sessions every 5 min (heartbeat > 2 min old)
+- [x] `PlayContent` query — full implementation:
+  - Validates active subscription
+  - Resolves max quality from user's plan
+  - Builds Cloudinary streaming URL at appropriate quality
+  - Auto-upserts `WatchHistory` (supports re-watching reset)
+  - Increments `ViewCount` on each play
 
 ---
 
@@ -452,7 +444,7 @@ tests
 
 ---
 
-### Phase 10 — Engagement 🔄
+### Phase 10 — Engagement ✅
 > Watch history, Continue Watching, Ratings
 
 - [x] Add rating (ThumbUp / ThumbDown / DoubleThumbUp)
@@ -462,10 +454,10 @@ tests
 - [x] Get active profile's rating for a specific title (`GetMyMovieRating`)
 - [x] Get all ratings for a specific title (`GetMovieRatings`)
 - [x] Get watch history
-- [ ] Watch progress upsert on stream end (`StoppedAtSeconds`, `TotalDurationSeconds`)
+- [x] Watch history auto-upsert on `PlayContent` (integrated into streaming flow)
+- [x] Re-watch reset logic (resets progress when content is replayed)
+- [x] Continue Watching query (incomplete, ordered by `WatchedAt DESC`)
 - [ ] Auto-complete at 90% watched (`IsCompleted=true`)
-- [ ] Continue Watching query (incomplete, ordered by `WatchedAt DESC`)
-- [ ] Re-watch reset logic
 - [ ] Rating change triggers `AverageRating` recalculation
 
 ---
@@ -578,7 +570,6 @@ NetflixClone.Domain/
 │   ├── Identity/           → ApplicationUser, Profile, ProfilePreference, RefreshToken
 │   ├── Subscriptions/      → Plan, Subscription, Invoice, PaymentMethod
 │   ├── Catalog/            → Content, Season, Episode, Genre, Person
-│   ├── Media/              → StreamingSession
 │   └── Engagement/         → WatchHistory, Rating
 ├── Common/
 │   ├── Enums/              → SubscriptionStatus, MaturityRating, VideoQuality, RatingType, ...
@@ -586,18 +577,20 @@ NetflixClone.Domain/
 │   └── Identity/           → Value objects
 
 NetflixClone.Application/
-├── Persistence/            → IBaseRepository (repository contracts)
+├── Contracts/
+│   ├── Persistence/        → IBaseRepository, IContentRepository, IProfileRepository, IRatingRepository, ISubscriptionRepository, IWatchHistoryRepository
+│   └── Infrasructure/      → IStripeService, IEmailService, ICloudinaryService, IJwtTokenGeneration, IOtpService
 └── Features/
     ├── Authentication/     → Register, Login, Logout, RefreshToken, ForgotPassword, ResetPassword, EmailConfirmation, ResendEmailConfirmationOtp
     ├── Profiles/           → CreateProfile, UpdateProfile, DeleteProfile, GetProfiles, SwitchProfiles
-    ├── Subscriptions/      → SubscribePlan, UpgradePlan, GetMySubscription
+    ├── Subscriptions/      → SubscribePlan (Checkout-only), HandleStripeWebhook, GetMySubscription
     ├── Subscription-Plans/ → GetPlans, AddPlans, AddSpecialPlans, UpdatePlans
     ├── Catalog/
     │   ├── Content/        → CreateContent, UpdateContent, DeleteContent, MakeContentAvailable, GetContentById (with cast)
     │   ├── Content-genres/ → CreateGenre, UpdateGenre, DeleteGenre
     │   ├── Person/         → CreatePerson, UpdatePerson, DeletePerson, GetPersonById (with filmography)
     │   └── Queries/        → GetAllCatalog (paginated), GetTrendingContent
-    ├── Streaming/          → PlayContent (query)
+    ├── Streaming/          → PlayContent (validates sub → Cloudinary URL → upsert watch history)
     └── Engagement/
         ├── Commands/       → AddRating, UpdateRating, DeleteRating
         └── Queries/        → GetMyRatings, GetMyMovieRating, GetMovieRatings, GetWatchHistory
@@ -606,13 +599,16 @@ NetflixClone.Infrastructure/
 └── Services/
     ├── JwtTokenGeneration.cs  → JWT access token + claims generation
     ├── EmailService.cs        → SendGrid/Resend integration (verification, password reset, invoices)
-    └── OtpService.cs          → OTP generation for email confirmation & PIN flows
+    ├── OtpService.cs          → OTP generation for email confirmation & PIN flows
+    ├── StripeService.cs       → Stripe Checkout + webhook event verification
+    └── CloudinaryService.cs   → Video/image upload + quality-based URL generation
 
 NetflixClone.Persistence/
 ├── NetflixCloneDbContext.cs
 ├── NetflixCloneDbContextFactory.cs
-├── PersistenceServiceRegistration.cs
-├── Configurations/         → EF Fluent API configs (Identity, Subscriptions, Catalog, Media, Engagement)
+├── PersistenceServiceRegistration.cs → DI registration for all repositories
+├── Repositories/           → BaseRepository<T>, ContentRepository, ProfileRepository, RatingRepository, SubscriptionRepository, WatchHistoryRepository
+├── Configurations/         → EF Fluent API configs (Identity, Subscriptions, Catalog, Engagement)
 ├── Migrations/             → EF Core migrations
 └── Seeds/                  → DatabaseSeeder, GenreSeeder, PersonSeeder
 

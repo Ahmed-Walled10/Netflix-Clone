@@ -4,7 +4,7 @@ using NetflixClone.Domain.Entities.Catalog;
 
 namespace NetflixClone.Application.Features.Catalog.ContentGenres.Commands.DeleteGenre;
 
-public class DeleteGenreRequestHandler : IRequestHandler<DeleteGenreRequest, bool>
+public class DeleteGenreRequestHandler : IRequestHandler<DeleteGenreRequest, Unit>
 {
     private readonly IBaseRepository<Genre> _genreRepo;
 
@@ -13,16 +13,16 @@ public class DeleteGenreRequestHandler : IRequestHandler<DeleteGenreRequest, boo
         _genreRepo = genreRepo;
     }
 
-    public async Task<bool> Handle(DeleteGenreRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteGenreRequest request, CancellationToken cancellationToken)
     {
         var genre = await _genreRepo.GetByIdAsync(request.Id, cancellationToken);
 
         if (genre is null)
-            return false;
+            throw new KeyNotFoundException($"Genre {request.Id} was not found.");
 
         await _genreRepo.DeleteAsync(genre);
         await _genreRepo.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return Unit.Value;
     }
 }

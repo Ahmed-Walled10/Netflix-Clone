@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NetflixClone.Application.Contracts.Persistence;
+using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Infrastructure.Persistence;
+using NetflixClone.Persistence.Repositories;
 
 namespace NetflixClone.Persistence
 {
@@ -32,6 +35,14 @@ namespace NetflixClone.Persistence
             })
             .AddEntityFrameworkStores<NetflixCloneDbContext>()
             .AddDefaultTokenProviders();
+
+            // ── Repositories ───────────────────────────────────────────────
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IContentRepository, ContentRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+            services.AddScoped<IWatchHistoryRepository, WatchHistoryRepository>();
 
             return services;
         }

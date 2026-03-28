@@ -1,7 +1,7 @@
 using NetflixClone.Application.Contracts;
 using System.Security.Cryptography;
 
-namespace NetflixClone.Application.Services
+namespace NetflixClone.Infrastructure.Services
 {
     public class OtpService : IOtpService
     {

@@ -14,5 +14,15 @@ namespace NetflixClone.Application.Contracts.Persistence
             Guid profileId,
             bool continueWatchingOnly = false,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Finds an existing watch-history record for a profile + content + optional episode.
+        /// Returns null if the user has never watched this content/episode on this profile.
+        /// </summary>
+        Task<WatchHistory?> GetByProfileAndContentAsync(
+            Guid profileId,
+            Guid contentId,
+            Guid? episodeId = null,
+            CancellationToken cancellationToken = default);
     }
 }
