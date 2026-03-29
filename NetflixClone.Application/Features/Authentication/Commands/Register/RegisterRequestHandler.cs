@@ -7,7 +7,7 @@ using NetflixClone.Domain.Entities.Identity;
 
 namespace NetflixClone.Application.Features.Authentication.Commands.Register
 {
-    public class RegisterRequestHandler : IRequestHandler<RegisterRequest, RegisterResponse>
+    public class RegisterRequestHandler : IRequestHandler<RegisterRequest, RegisterResponce>
     {
 
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,7 +29,7 @@ namespace NetflixClone.Application.Features.Authentication.Commands.Register
 
         }
 
-        public async Task<RegisterResponse> Handle(RegisterRequest request, CancellationToken cancellationToken)
+        public async Task<RegisterResponce> Handle(RegisterRequest request, CancellationToken cancellationToken)
         {
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
@@ -58,7 +58,7 @@ namespace NetflixClone.Application.Features.Authentication.Commands.Register
 
             var token = _jwtTokenGeneration.GenerateJwtToken(user, new List<string> { "NotSubscriber" });
 
-            return new RegisterResponse
+            return new RegisterResponce
             {
                 Token = token,
                 Email = user.Email!,

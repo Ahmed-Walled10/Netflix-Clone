@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Entities.Subscriptions;
-using System.Xml.XPath;
 
 namespace NetflixClone.Application.Features.Subscription_Plans.Queries.GetPlans
 {

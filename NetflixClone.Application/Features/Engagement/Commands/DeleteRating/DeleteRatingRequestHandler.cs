@@ -21,7 +21,7 @@ public class DeleteRatingRequestHandler : IRequestHandler<DeleteRatingRequest, U
         if (rating is null)
             throw new KeyNotFoundException($"Rating {request.RatingId} was not found.");
 
-        await _ratingRepository.DeleteAsync(rating);
+        await _ratingRepository.DeleteAsync(rating, cancellationToken);
         await _ratingRepository.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

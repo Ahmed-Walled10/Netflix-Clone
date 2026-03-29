@@ -30,7 +30,7 @@ public class DeleteProfileRequestHandler : IRequestHandler<DeleteProfileRequest,
             throw new KeyNotFoundException(
                 $"Profile {request.ProfileId} does not exist or does not belong to this account.");
 
-        await _profileBaseRepository.DeleteAsync(profile);
+        await _profileBaseRepository.DeleteAsync(profile, cancellationToken);
         await _profileBaseRepository.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

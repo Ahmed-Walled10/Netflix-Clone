@@ -21,7 +21,7 @@ public class DeleteContentRequestHandler : IRequestHandler<DeleteContentRequest,
         if (content is null)
             throw new KeyNotFoundException($"Content {request.Id} was not found.");
 
-        await _contentRepo.DeleteAsync(content);
+        await _contentRepo.DeleteAsync(content, cancellationToken);
         await _contentRepo.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

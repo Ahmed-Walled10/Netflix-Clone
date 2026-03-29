@@ -19,10 +19,10 @@ namespace NetflixClone.Application.Features.Engagement.Commands.AddRating
 
         public async Task<AddRatingResponse> Handle(AddRatingRequest request, CancellationToken cancellationToken)
         {
-            var movie= await _ratingRepository.GetByIdAsync(request.MovieId, cancellationToken);
+            var movie= await _ratingRepository.GetByIdAsync(request.ContentId, cancellationToken);
 
             if (movie == null)
-                throw new KeyNotFoundException($"Movie with Id {request.MovieId} was not found.");
+                throw new KeyNotFoundException($"Movie with Id {request.ContentId} was not found.");
 
             var rating = _mapper.Map<Rating>(request);
 

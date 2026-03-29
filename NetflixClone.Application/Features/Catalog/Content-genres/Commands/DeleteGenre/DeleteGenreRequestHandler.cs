@@ -20,7 +20,7 @@ public class DeleteGenreRequestHandler : IRequestHandler<DeleteGenreRequest, Uni
         if (genre is null)
             throw new KeyNotFoundException($"Genre {request.Id} was not found.");
 
-        await _genreRepo.DeleteAsync(genre);
+        await _genreRepo.DeleteAsync(genre, cancellationToken);
         await _genreRepo.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

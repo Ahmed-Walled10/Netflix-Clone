@@ -20,7 +20,7 @@ public class DeletePersonRequestHandler : IRequestHandler<DeletePersonRequest, U
         if (person is null)
             throw new KeyNotFoundException($"Person {request.Id} was not found.");
 
-        await _personRepo.DeleteAsync(person);
+        await _personRepo.DeleteAsync(person, cancellationToken);
         await _personRepo.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
