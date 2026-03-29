@@ -29,10 +29,10 @@ The MVP strips the full project bible down to what actually matters for a first 
 | Stripe Subscriptions | Stripe Checkout → webhook creates subscription + invoice + role change + email | ✅ Done |
 | Video Streaming | Cloudinary quality-based streaming URLs, auto watch history upsert | ✅ Done |
 | Media Pipeline | Admin uploads → Cloudinary → store PublicId → build streaming URLs per quality | ✅ Done |
-| Full-Text Search | SQL Server FTS on Title, Description, Cast | 🔜 Next |
+| Full-Text Search | SQL Server FTS on Title, Description, Cast | ✅ Done |
 | Engagement | Watch history, continue watching, thumb ratings, per-movie rating queries | ✅ Done |
-| Trending | ViewCount++ on every stream start + daily Hangfire snapshot | 🔜 Next |
-| Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | 🔜 Next |
+| Trending | ViewCount++ on every stream start + daily Hangfire snapshot | ✅ Done |
+| Role-Based Access | Subscriber \| ContentManager \| SuperAdmin — via JWT claims | ✅ Done |
 | Email Flows | Confirm email, reset password, reset PIN, send invoice | ✅ Done |
 | Repository Layer | All repositories implemented with EF Core (Content, Profile, Rating, Subscription, WatchHistory) | ✅ Done |
 
@@ -325,7 +325,7 @@ tests
 - [x] `appsettings.json` configured with connection string
 - [x] `Program.cs` updated to register Persistence services
 - [ ] Global exception handling middleware
-- [ ] MediatR pipeline (logging, validation, caching behaviors)
+- [x] MediatR pipeline (logging, validation, caching behaviors)
 
 ---
 
@@ -346,10 +346,10 @@ tests
   - Plan `MaxProfiles` enforcement wired in profile creation
 - [x] `ProfilePreference` entity — genre/actor/director preferences per profile
 - [x] Profile switching command scaffolded (`SwitchProfiles`)
-- [ ] Profile switching JWT issuance (new JWT with `profileId` claim)
-- [ ] Kids mode auto-set when age < 13
-- [ ] Optional PIN (BCrypt-hashed, required on switch if set)
-- [ ] Role-based authorization (`SuperAdmin`, `ContentManager`, `Subscriber`)
+- [x] Profile switching JWT issuance (new JWT with `profileId` claim)
+- [x] Kids mode auto-set when age < 13
+- [x] Optional PIN (BCrypt-hashed, required on switch if set)
+- [x] Role-based authorization (`SuperAdmin`, `ContentManager`, `Subscriber`)
 
 ---
 
@@ -368,9 +368,8 @@ tests
 - [x] Create special/promotional plan (`AddSpecialPlans` command)
 - [x] Update plan details (`UpdatePlans` command)
 - [x] Stripe service: `CreateOrGetCustomer`, `CreateCheckoutSession`, `ConstructWebhookEvent`
-- [ ] Seed Plans table (Basic / Standard / Premium — monthly & yearly)
-- [ ] Cancel subscription (`CancelAtPeriodEnd=true`)
-- [ ] Invoice history endpoint
+- [x] Seed Plans table (Basic / Standard / Premium — monthly & yearly)
+- [x] Invoice history endpoint
 - [ ] Upgrade plan flow via Stripe
 
 ---
@@ -378,10 +377,10 @@ tests
 ### Phase 4 — Enforce Plan Limits + RBAC 🔜
 > Plan limits on profiles, role enforcement on endpoints
 
-- [ ] Enforce `Plan.MaxProfiles` on profile creation
-- [ ] Require active subscription for streaming
+- [x] Enforce `Plan.MaxProfiles` on profile creation
+- [x] Require active subscription for streaming
 - [ ] Role-based authorization on all endpoints
-- [ ] Seed SuperAdmin account
+- [x] Seed SuperAdmin account
 
 ---
 
@@ -395,11 +394,10 @@ tests
 - [x] Genre management — Create, Update, Delete genres
 - [x] Person (cast/crew) management — Create, Update, Delete persons
 - [x] `GetPersonById` — person detail including filmography (`PersonWorkDto`)
-- [ ] Season + Episode CRUD
-- [ ] Maturity ratings enforcement
-- [ ] Content browse by genre (filterable)
-- [ ] Slug-based content detail endpoint
-- [ ] New Releases endpoint (`AvailableFrom DESC`)
+- [x] Season + Episode CRUD
+- [x] Maturity ratings enforcement
+- [x] Content browse by genre (filterable)
+- [x] Slug-based content detail endpoint
 
 ---
 
@@ -409,7 +407,7 @@ tests
 - [x] Cloudinary integration (`ICloudinaryService` + implementation)
 - [x] Video upload to Cloudinary → store `CloudinaryPublicId` on Content
 - [x] Quality-based streaming URL generation (SD/HD/FHD/4K based on plan)
-- [ ] Thumbnail/poster image upload to Cloudinary
+- [x] Thumbnail/poster image upload to Cloudinary
 - [x] Admin flips `IsAvailable=true` to publish content
 
 ---
@@ -429,18 +427,16 @@ tests
 ### Phase 8 — Full-Text Search 🔜
 > SQL Server FTS indexes, search endpoint, autocomplete
 
-- [ ] SQL Server Full-Text catalog + indexes on `Contents` (Title, Description)
-- [ ] Full-Text index on `Persons.FullName` (cast search)
-- [ ] Search endpoint with filters (genre, year range, maturity, type)
-- [ ] Autocomplete endpoint (top 5 title suggestions)
+- [x] Full-Text index on `Persons.FullName` (cast search)
+- [x] Search endpoint with filters (genre, year range, maturity, type)
 
 ---
 
 ### Phase 9 — Trending 🔜
 > ViewCount snapshots, Hangfire daily job, Redis cache
 
-- [ ] Hangfire daily job: snapshot top 20 by ViewCount → `TrendingSnapshots` (Daily/Weekly/Monthly)
-- [ ] `GET /api/catalog/trending?period=Weekly` — served from Redis (TTL: 1h)
+- [x] Hangfire daily job: snapshot top 20 by ViewCount → `TrendingSnapshots` (Daily/Weekly/Monthly)
+- [x] `GET /api/catalog/trending?period=Weekly` — served from Redis (TTL: 1h)
 
 ---
 
@@ -457,8 +453,8 @@ tests
 - [x] Watch history auto-upsert on `PlayContent` (integrated into streaming flow)
 - [x] Re-watch reset logic (resets progress when content is replayed)
 - [x] Continue Watching query (incomplete, ordered by `WatchedAt DESC`)
-- [ ] Auto-complete at 90% watched (`IsCompleted=true`)
-- [ ] Rating change triggers `AverageRating` recalculation
+- [x] Auto-complete at 90% watched (`IsCompleted=true`)
+- [x] Rating change triggers `AverageRating` recalculation
 
 ---
 
@@ -466,13 +462,10 @@ tests
 > These features are out of scope for the MVP but are fully designed and planned.
 
 ### Advanced Streaming
-- [ ] HLS manifest delivery (replace direct MP4 URLs)
-- [ ] FFmpeg-based multi-resolution encoding pipeline (360p → 4K)
-- [ ] `EncodingJob` status tracking + retry logic (max 3 attempts)
-- [ ] `VideoVariant` records per resolution
-- [ ] Subtitle track upload & storage
-- [ ] Quality cap enforcement per plan (1080p / 4K)
-- [ ] Download support (Standard: 2 devices, Premium: 4 devices)
+- [x] CLoudinary delivery (replace direct MP4 URLs)
+- [x] `VideoVariant` records per resolution
+- [x] Subtitle track upload & storage
+- [x] Quality cap enforcement per plan (720p /1080p / 4K)
 
 ### Plan Upgrades & Dunning
 - [ ] Plan upgrade — immediate + prorated invoice
@@ -487,14 +480,8 @@ tests
 - [ ] Redis caching of top-N recommendations per profile (TTL: 1h)
 
 ### Reviews & Social
-- [ ] Reviews CRUD + soft-delete (admin moderation)
-- [ ] Review likes (one per profile per review)
-
-### Notifications
-- [ ] In-app notifications (billing success/failure, new content, profile alerts)
-- [ ] Mark notifications as read
-- [ ] New content notification on `IsAvailable` toggle
-
+- [x] Reviews CRUD + soft-delete (admin moderation)
+      
 ### Admin & Moderation
 - [ ] Admin dashboard stats (total users, active subscriptions, revenue)
 - [ ] Content moderation (review soft-delete by admin)
