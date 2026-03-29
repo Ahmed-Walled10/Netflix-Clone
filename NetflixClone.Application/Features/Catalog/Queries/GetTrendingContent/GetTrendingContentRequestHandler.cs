@@ -19,7 +19,7 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetTrendingContent
         public async Task<List<GetCatalogResponce>> Handle(GetTrendingContentRequest request, CancellationToken cancellationToken)
         {
 
-            var trendingEntities = await _contentRepository.GetTrendingAsync(request.Count, cancellationToken);
+            var trendingEntities = await _contentRepository.GetTrendingAsync(request.IsKidsMode,request.Count, cancellationToken);
 
             var responseItems = _mapper.Map<List<GetCatalogResponce>>(trendingEntities);
 

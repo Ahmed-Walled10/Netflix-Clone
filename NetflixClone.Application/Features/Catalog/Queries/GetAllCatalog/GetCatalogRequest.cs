@@ -14,5 +14,7 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
     {
             public CatalogResourceParameters CatalogResourceParameters { get; set; }
             public bool IsRequestedByAdmin { get; set; }
+
+            public bool IsKidsMode { get; set; }
     }
 }

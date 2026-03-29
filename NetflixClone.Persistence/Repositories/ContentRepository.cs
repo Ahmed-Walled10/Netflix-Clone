@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NetflixClone.Application.Persistence;
 using NetflixClone.Application.ResourceParameters;
 using NetflixClone.Application.Responces;
+using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Catalog;
 using NetflixClone.Infrastructure.Persistence;
 
@@ -15,6 +16,7 @@ namespace NetflixClone.Persistence.Repositories
         public async Task<PagedResult<Content>> GetCatalogAsync(
             CatalogResourceParameters parameters,
             bool IsRequestedByAdmin,
+            bool IsKidsMode,
             CancellationToken cancellationToken = default)
         {
             var query = _dbSet.AsNoTracking()
@@ -31,6 +33,7 @@ namespace NetflixClone.Persistence.Repositories
                     c.Title.ToLower().Contains(search) ||
                     c.Description.ToLower().Contains(search));
             }
+
 
             if (parameters.GenreIds is { Count: > 0 })
             {
@@ -79,8 +82,18 @@ namespace NetflixClone.Persistence.Repositories
                 query = query.Where(c => c.CreatedAt <= parameters.ToDate.Value);
             }
 
+            if (IsKidsMode)
+            {
+                // In Kids Mode, only show content with MaturityRating of G or PG
+                query = query.Where(c =>
+                    c.MaturityRating == MaturityRating.G ||
+                    c.MaturityRating == MaturityRating.TV_PG ||
+                    c.MaturityRating == MaturityRating.TV_Y7 ||
+                    c.MaturityRating == MaturityRating.PG13);
+            }
+
             // Only show available content
-            if(IsRequestedByAdmin== false)
+            if (IsRequestedByAdmin== false)
                 query = query.Where(c => c.IsAvailable);
 
             // ── Ordering ─────────────────────────────────────────────────
@@ -112,11 +125,24 @@ namespace NetflixClone.Persistence.Repositories
         }
 
         public async Task<IReadOnlyList<Content>> GetTrendingAsync(
+            bool IsKidsMode,
             int count = 10,
             CancellationToken cancellationToken = default)
         {
-            return await _dbSet.AsNoTracking()
-                .Where(c => c.IsAvailable)
+
+            var query= _dbSet.AsNoTracking()
+                .Where(c => c.IsAvailable);
+
+            if (IsKidsMode)
+            {
+                query = query.Where(c =>
+                    c.MaturityRating == MaturityRating.G ||
+                    c.MaturityRating == MaturityRating.TV_PG ||
+                    c.MaturityRating == MaturityRating.TV_Y7 ||
+                    c.MaturityRating == MaturityRating.PG13);
+            }
+
+            return await query
                 .OrderByDescending(c => c.ViewCount)
                 .Take(count)
                 .ToListAsync(cancellationToken);

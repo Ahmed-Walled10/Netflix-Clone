@@ -21,7 +21,7 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
         public async Task<PagedResult<GetCatalogResponce>> Handle(GetCatalogRequest request, CancellationToken cancellationToken)
         {
 
-            var pagedEntities = await _contentRepository.GetCatalogAsync(request.CatalogResourceParameters,request.IsRequestedByAdmin, cancellationToken);
+            var pagedEntities = await _contentRepository.GetCatalogAsync(request.CatalogResourceParameters,request.IsRequestedByAdmin, request.IsKidsMode, cancellationToken);
 
             var responseItems = _mapper.Map<List<GetCatalogResponce>>(pagedEntities.Items);
 

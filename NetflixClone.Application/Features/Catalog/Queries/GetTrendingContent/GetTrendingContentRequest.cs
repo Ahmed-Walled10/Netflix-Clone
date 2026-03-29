@@ -7,5 +7,8 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetTrendingContent
     {
         public int Count { get; set; } = 10;
         public bool IsRequestedByAdmin { get; set; }
+
+        public bool IsKidsMode { get; set; }
+
     }
 }
