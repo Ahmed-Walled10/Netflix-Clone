@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NetflixClone.Application.Contracts;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Domain.Entities.Identity;
 
@@ -31,7 +30,7 @@ namespace NetflixClone.Application.Features.Authentication.Commands.ForgotPasswo
             var result = await _userManager.UpdateAsync(User);
             if (!result.Succeeded)
             {
-                throw new Exception("Incorrect email or password");
+                throw new Exception("Failed to update user with password reset OTP.");
             }
             await _emailService.SendPasswordResetOtpAsync(
                 User.Email!,

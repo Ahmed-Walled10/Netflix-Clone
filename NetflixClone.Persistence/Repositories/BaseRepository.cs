@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Infrastructure.Persistence;
 
 namespace NetflixClone.Persistence.Repositories

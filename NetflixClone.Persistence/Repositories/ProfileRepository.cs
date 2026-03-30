@@ -34,7 +34,6 @@ namespace NetflixClone.Persistence.Repositories
         public async Task AddProfileAsync(Profile profile)
         {
             await _context.Profiles.AddAsync(profile);
-            await _context.SaveChangesAsync();
         }
     }
 }

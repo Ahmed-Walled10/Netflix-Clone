@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Domain.Entities.Subscriptions;
 

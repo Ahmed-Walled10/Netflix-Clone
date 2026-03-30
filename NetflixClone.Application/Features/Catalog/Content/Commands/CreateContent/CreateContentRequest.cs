@@ -2,7 +2,7 @@ using MediatR;
 using NetflixClone.Domain.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace NetflixClone.Application.Features.Content.Commands.CreateContent;
+namespace NetflixClone.Application.Features.Catalog.Content.Commands.CreateContent;
 
 public class CreateContentRequest : IRequest<CreateContentResponse>
 {
@@ -50,10 +50,10 @@ public class CreateContentRequest : IRequest<CreateContentResponse>
     [StringLength(10)]
     public string OriginalLanguage { get; set; } = "en";
 
-    // ── Media URLs (MVP — direct blob links, replaced by asset pipeline in v2) ─
+    // ── Media URLs ──────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Direct Azure Blob Storage URL for the main MP4 file.
+    /// URL for the main video file (populated after upload via Cloudinary).
     /// Required for Movie / Documentary. Optional at creation for Series (uploaded per-episode).
     /// </summary>
     [Url]
@@ -145,7 +145,7 @@ public class CreateEpisodeRequest
     public string? ThumbnailUrl { get; set; }
 
     /// <summary>
-    /// Direct blob URL for this episode's MP4.
+    /// URL for this episode's video (populated after upload via Cloudinary).
     /// Null at creation is acceptable — admin can upload later.
     /// </summary>
     [Url]

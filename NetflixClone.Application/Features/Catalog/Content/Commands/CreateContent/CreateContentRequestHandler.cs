@@ -1,12 +1,12 @@
 using AutoMapper;
 using MediatR;
 using NetflixClone.Application.Common.Helpers;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Catalog;
 using ContentEntity = NetflixClone.Domain.Entities.Catalog.Content;
 
-namespace NetflixClone.Application.Features.Content.Commands.CreateContent;
+namespace NetflixClone.Application.Features.Catalog.Content.Commands.CreateContent;
 
 public class CreateContentRequestHandler : IRequestHandler<CreateContentRequest, CreateContentResponse>
 {

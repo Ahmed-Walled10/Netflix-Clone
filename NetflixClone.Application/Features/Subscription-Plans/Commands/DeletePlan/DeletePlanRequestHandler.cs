@@ -1,5 +1,5 @@
-﻿using MediatR;
-using NetflixClone.Application.Persistence;
+using MediatR;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Subscriptions;
 
 namespace NetflixClone.Application.Features.Subscription_Plans.Commands.DeletePlan
@@ -21,6 +21,7 @@ namespace NetflixClone.Application.Features.Subscription_Plans.Commands.DeletePl
                 throw new Exception($"Plan with ID {request.Id} not found.");
 
             await _planRepo.DeleteAsync(plan, cancellationToken);
+            await _planRepo.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }

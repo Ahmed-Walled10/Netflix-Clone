@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace NetflixClone.Domain.Common.Primitives
 {
-    public interface ISoftDeletable
+    public abstract class SoftDeletableEntity : AuditableEntity, ISoftDeletable
     {
-        bool IsDeleted { get; set; }
-        DateTime? DeletedAt { get; set; }
-    }
-    public abstract class SoftDeletableEntity: AuditableEntity, ISoftDeletable 
-    {
-        public bool IsDeleted { get; set; } = false;
-        public DateTime? DeletedAt { get; set; }
+        public bool IsDeleted { get; private set; } = false;
+        public DateTime? DeletedAt { get; private set; }
+
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+            DeletedAt = DateTime.UtcNow;
+        }
+
+        public void Restore()
+        {
+            IsDeleted = false;
+            DeletedAt = null;
+        }
     }
 }

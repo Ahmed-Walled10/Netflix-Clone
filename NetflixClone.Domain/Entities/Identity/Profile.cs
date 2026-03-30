@@ -6,41 +6,34 @@ namespace NetflixClone.Domain.Entities.Identity;
 public class Profile : AuditableEntity
 {
     // ── Foreign key ──────────────────────────────────────────────────
-    /// <summary>
-    /// FK → ApplicationUser.Id.
-    /// String because IdentityUser uses string PKs.
-    /// </summary>
+
     public string UserId { get; set; } = string.Empty;
 
     // ── Basic info ───────────────────────────────────────────────────
     public string Name { get; set; } = string.Empty;
 
-    /// <summary>Azure Blob URL for the chosen avatar image. Null = use default.</summary>
     public string? AvatarUrl { get; set; }
 
-    /// <summary>
-    /// Profile holder's age.
-    /// 0 = not set. Automatically enables IsKidsMode when Age is between 1 and 12.
-    /// Used to block content whose MaturityRating exceeds the age-appropriate threshold.
-    /// </summary>
-    public int Age { get; set; } = 0;
+    private int _age;
+    public int Age
+    {
+        get => _age;
+        private set => _age = value;
+    }
+
+    public bool IsKidsMode { get; private set; } = false;
 
     /// <summary>
-    /// When true, content is filtered to G / TV-PG / TV-Y7  only.
-    /// Auto-set when Age < 13. Can also be toggled manually by the account owner.
+    /// Sets the profile age and automatically enables IsKidsMode when Age is between 1 and 12.
     /// </summary>
-    public bool IsKidsMode { get; set; } = false;
+    public void SetAge(int age)
+    {
+        Age = age;
+        IsKidsMode = age is > 0 and < 13;
+    }
 
-    /// <summary>
-    /// BCrypt-hashed 4-digit PIN.
-    /// Null = no PIN set on this profile. Optionally required on profile switch.
-    /// </summary>
     public string? PinHash { get; set; }
 
-    /// <summary>
-    /// ISO 639-1 language code for UI and content language preference.
-    /// Default: "en".
-    /// </summary>
     public string PreferredLanguage { get; set; } = "en";
 
 

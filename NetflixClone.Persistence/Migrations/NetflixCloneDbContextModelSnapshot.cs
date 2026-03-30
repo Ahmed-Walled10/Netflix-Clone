@@ -161,6 +161,9 @@ namespace NetflixClone.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CloudinaryPublicId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -312,6 +315,9 @@ namespace NetflixClone.Persistence.Migrations
 
                     b.Property<DateOnly?>("AirDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("CloudinaryPublicId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -533,6 +539,11 @@ namespace NetflixClone.Persistence.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<int>("TotalDurationSeconds")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<DateTime>("WatchedAt")
                         .HasColumnType("datetime2");
 
@@ -571,6 +582,12 @@ namespace NetflixClone.Persistence.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("EmailConfirmationOtp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EmailConfirmationOtpExpiration")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
@@ -591,6 +608,9 @@ namespace NetflixClone.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastOtpAttemptAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -605,8 +625,17 @@ namespace NetflixClone.Persistence.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("OtpAttempts")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordResetOtp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetOtpExpiration")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -776,55 +805,6 @@ namespace NetflixClone.Persistence.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("NetflixClone.Domain.Entities.Media.StreamingSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DeviceId")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("DeviceType")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("EndedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("EpisodeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastHeartbeatAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentId");
-
-                    b.HasIndex("ProfileId", "IsActive", "LastHeartbeatAt")
-                        .HasDatabaseName("IX_StreamingSessions_ProfileId_IsActive_Heartbeat");
-
-                    b.ToTable("StreamingSessions", (string)null);
-                });
-
             modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
@@ -879,56 +859,6 @@ namespace NetflixClone.Persistence.Migrations
                     b.ToTable("Invoices", (string)null);
                 });
 
-            modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.PaymentMethod", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ExpiryMonth")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExpiryYear")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Last4")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nchar(4)")
-                        .IsFixedLength();
-
-                    b.Property<string>("StripePaymentMethodId")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StripePaymentMethodId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId", "IsDefault")
-                        .IsUnique()
-                        .HasFilter("[IsDefault] = 1");
-
-                    b.ToTable("PaymentMethods", (string)null);
-                });
-
             modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.Plan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -954,8 +884,10 @@ namespace NetflixClone.Persistence.Migrations
                     b.Property<int>("MaxProfiles")
                         .HasColumnType("int");
 
-                    b.Property<int>("MaxVideoQuality")
-                        .HasColumnType("int");
+                    b.Property<string>("MaxVideoQuality")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -984,6 +916,9 @@ namespace NetflixClone.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CancelAtPeriodEnd")
                         .HasColumnType("bit");
 
@@ -1006,6 +941,9 @@ namespace NetflixClone.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(256)
@@ -1218,25 +1156,6 @@ namespace NetflixClone.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NetflixClone.Domain.Entities.Media.StreamingSession", b =>
-                {
-                    b.HasOne("NetflixClone.Domain.Entities.Catalog.Content", "Content")
-                        .WithMany()
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("NetflixClone.Domain.Entities.Identity.Profile", "Profile")
-                        .WithMany("StreamingSessions")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Content");
-
-                    b.Navigation("Profile");
-                });
-
             modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.Invoice", b =>
                 {
                     b.HasOne("NetflixClone.Domain.Entities.Subscriptions.Subscription", "Subscription")
@@ -1246,17 +1165,6 @@ namespace NetflixClone.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Subscription");
-                });
-
-            modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.PaymentMethod", b =>
-                {
-                    b.HasOne("NetflixClone.Domain.Entities.Identity.ApplicationUser", "User")
-                        .WithMany("PaymentMethods")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("NetflixClone.Domain.Entities.Subscriptions.Subscription", b =>
@@ -1308,8 +1216,6 @@ namespace NetflixClone.Persistence.Migrations
 
             modelBuilder.Entity("NetflixClone.Domain.Entities.Identity.ApplicationUser", b =>
                 {
-                    b.Navigation("PaymentMethods");
-
                     b.Navigation("Profiles");
 
                     b.Navigation("RefreshTokens");
@@ -1322,8 +1228,6 @@ namespace NetflixClone.Persistence.Migrations
                     b.Navigation("Preferences");
 
                     b.Navigation("Ratings");
-
-                    b.Navigation("StreamingSessions");
 
                     b.Navigation("WatchHistories");
                 });

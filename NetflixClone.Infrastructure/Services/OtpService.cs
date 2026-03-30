@@ -1,4 +1,4 @@
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using System.Security.Cryptography;
 
 namespace NetflixClone.Infrastructure.Services

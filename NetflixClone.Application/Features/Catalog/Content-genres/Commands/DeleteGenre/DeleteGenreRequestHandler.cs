@@ -1,5 +1,5 @@
 using MediatR;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Catalog;
 
 namespace NetflixClone.Application.Features.Catalog.ContentGenres.Commands.DeleteGenre;

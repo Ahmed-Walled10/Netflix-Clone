@@ -26,7 +26,7 @@ namespace NetflixClone.Application.Features.Subscriptions.Queries.GetMySubscript
                 Status: subscription.Status.ToString(),
                 CurrentPeriodStart: subscription.CurrentPeriodStart,
                 CurrentPeriodEnd: subscription.CurrentPeriodEnd,
-                CancelAtPeriodEnd: subscription.CancelAtPeriodEnd
+                CancelAtPeriodEnd: !subscription.AutoRenew
             );
         }
     }

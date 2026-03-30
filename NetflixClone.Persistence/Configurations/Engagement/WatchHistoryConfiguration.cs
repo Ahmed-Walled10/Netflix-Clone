@@ -17,8 +17,9 @@ public class WatchHistoryConfiguration : IEntityTypeConfiguration<WatchHistory>
             .IsRequired()
             .HasDefaultValue(0);
 
-        // TotalDurationSeconds is intentionally commented out in the entity (MVP simplification).
-        // Remove this comment and add back when the column is re-introduced.
+        builder.Property(wh => wh.TotalDurationSeconds)
+            .IsRequired()
+            .HasDefaultValue(0);
 
         builder.Property(wh => wh.IsCompleted)
             .IsRequired()

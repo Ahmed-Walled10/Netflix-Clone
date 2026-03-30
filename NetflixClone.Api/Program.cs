@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NetflixClone.Application.Contracts;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Infrastructure.Services;
 using NetflixClone.Infrastructure.Mail;
@@ -36,6 +35,9 @@ builder.Services.AddScoped<IStripeService, NetflixClone.Infrastructure.Services.
 // ── Infrastructure (Cloudinary) ────────────────────────────────────────────
 builder.Services.Configure<NetflixClone.Infrastructure.Options.CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<ICloudinaryService, NetflixClone.Infrastructure.Services.CloudinaryService>();
+
+// ── Infrastructure (Email) ─────────────────────────────────────────────────
+builder.Services.Configure<NetflixClone.Infrastructure.Options.EmailOptions>(builder.Configuration.GetSection("EmailSettings"));
 
 // ── JWT Bearer Authentication ──────────────────────────────────────────────
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

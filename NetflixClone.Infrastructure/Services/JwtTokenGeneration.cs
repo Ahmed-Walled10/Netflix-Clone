@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Identity;
 using System.IdentityModel.Tokens.Jwt;

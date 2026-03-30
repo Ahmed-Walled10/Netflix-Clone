@@ -7,5 +7,7 @@ namespace NetflixClone.Application.Features.Catalog.Content.Queries.GetContentBy
     {
         public Guid Id { get; set; }
 
+        public bool IsUserKid { get; set; }
+
     }
 }

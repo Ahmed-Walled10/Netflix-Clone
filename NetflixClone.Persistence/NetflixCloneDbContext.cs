@@ -25,7 +25,6 @@ namespace NetflixClone.Infrastructure.Persistence
         public DbSet<Plan> Plans => Set<Plan>();
         public DbSet<SubscriptionEntity> Subscriptions => Set<SubscriptionEntity>();
         public DbSet<Invoice> Invoices => Set<Invoice>();
-        public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
 
         // ── Catalog ──────────────────────────────────────────────────────
         public DbSet<Content> Contents => Set<Content>();

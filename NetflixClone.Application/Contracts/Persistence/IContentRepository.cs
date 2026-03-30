@@ -1,10 +1,9 @@
-using MediatR;
 using NetflixClone.Application.ResourceParameters;
 using NetflixClone.Application.Responces;
 using NetflixClone.Domain.Entities.Catalog;
-using Stripe.Forwarding;
 
-namespace NetflixClone.Application.Persistence;
+
+namespace NetflixClone.Application.Contracts.Persistence;
 
 public interface IContentRepository : IBaseRepository<Content>
 {

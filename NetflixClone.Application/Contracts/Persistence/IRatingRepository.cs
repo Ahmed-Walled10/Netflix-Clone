@@ -14,12 +14,12 @@ namespace NetflixClone.Application.Contracts.Persistence
         /// <summary>
         /// Returns a paged list of all ratings submitted by a specific profile.
         /// </summary>
-        Task<PagedResult<Rating>> GetMyRatingsAsync( CancellationToken cancellationToken = default);
+        Task<PagedResult<Rating>> GetMyRatingsAsync(Guid profileId, int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns the single rating a specific profile gave to a specific content item.
         /// Returns null if no rating exists.
         /// </summary>
-        Task<Rating?> GetMyMovieRatingAsync( Guid contentId, CancellationToken cancellationToken = default);
+        Task<Rating?> GetMyMovieRatingAsync( Guid contentId, Guid profileId, CancellationToken cancellationToken = default);
     }
 }

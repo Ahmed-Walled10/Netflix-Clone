@@ -62,9 +62,11 @@ public class ContentConfiguration : IEntityTypeConfiguration<Content>
         builder.Property(c => c.HeroImageUrl)
             .HasMaxLength(1024);
 
-        // AverageRating is a C# expression-bodied computed property (no setter).
-        // EF Core cannot persist it; it is recalculated from Ratings on every load.
-        builder.Ignore(c => c.AverageRating);
+        // AverageRating is now a stored, denormalized column maintained by
+        // Application layer handlers (AddRating, DeleteRating).
+        builder.Property(c => c.AverageRating)
+            .HasDefaultValue(0m)
+            .HasPrecision(3, 2);
 
         builder.Property(c => c.ViewCount)
             .HasDefaultValue(0L);

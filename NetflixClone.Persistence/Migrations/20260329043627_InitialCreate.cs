@@ -39,6 +39,12 @@ namespace NetflixClone.Persistence.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastLoginAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EmailConfirmationOtp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailConfirmationOtpExpiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PasswordResetOtp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordResetOtpExpiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OtpAttempts = table.Column<int>(type: "int", nullable: false),
+                    LastOtpAttemptAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -76,6 +82,7 @@ namespace NetflixClone.Persistence.Migrations
                     MaturityRating = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     OriginalLanguage = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false, defaultValue: "en"),
                     VideoUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    CloudinaryPublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrailerUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
                     ThumbnailUrl = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     HeroImageUrl = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
@@ -132,7 +139,7 @@ namespace NetflixClone.Persistence.Migrations
                     Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     BillingPeriod = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     MaxProfiles = table.Column<int>(type: "int", nullable: false),
-                    MaxVideoQuality = table.Column<int>(type: "int", nullable: false),
+                    MaxVideoQuality = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StripePriceId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -242,31 +249,6 @@ namespace NetflixClone.Persistence.Migrations
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PaymentMethods",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StripePaymentMethodId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Last4 = table.Column<string>(type: "nchar(4)", fixedLength: true, maxLength: 4, nullable: false),
-                    ExpiryMonth = table.Column<int>(type: "int", nullable: false),
-                    ExpiryYear = table.Column<int>(type: "int", nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PaymentMethods_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -411,7 +393,9 @@ namespace NetflixClone.Persistence.Migrations
                     CurrentPeriodEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CanceledAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CancelAtPeriodEnd = table.Column<bool>(type: "bit", nullable: false),
+                    AutoRenew = table.Column<bool>(type: "bit", nullable: false),
                     StripeSubscriptionId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    StripeCustomerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -482,38 +466,6 @@ namespace NetflixClone.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StreamingSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EpisodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeviceType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    DeviceId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastHeartbeatAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StreamingSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StreamingSessions_Contents_ContentId",
-                        column: x => x.ContentId,
-                        principalTable: "Contents",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_StreamingSessions_Profiles_ProfileId",
-                        column: x => x.ProfileId,
-                        principalTable: "Profiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Episodes",
                 columns: table => new
                 {
@@ -526,6 +478,7 @@ namespace NetflixClone.Persistence.Migrations
                     ReleaseYear = table.Column<int>(type: "int", nullable: true),
                     ThumbnailUrl = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     VideoUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    CloudinaryPublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     AirDate = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -577,6 +530,7 @@ namespace NetflixClone.Persistence.Migrations
                     ContentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EpisodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     StoppedAtSeconds = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TotalDurationSeconds = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     WatchedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -720,19 +674,6 @@ namespace NetflixClone.Persistence.Migrations
                 columns: new[] { "SubscriptionId", "PaidAt" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethods_StripePaymentMethodId",
-                table: "PaymentMethods",
-                column: "StripePaymentMethodId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethods_UserId_IsDefault",
-                table: "PaymentMethods",
-                columns: new[] { "UserId", "IsDefault" },
-                unique: true,
-                filter: "[IsDefault] = 1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Persons_Slug",
                 table: "Persons",
                 column: "Slug",
@@ -781,16 +722,6 @@ namespace NetflixClone.Persistence.Migrations
                 table: "Seasons",
                 columns: new[] { "SeriesId", "SeasonNumber" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StreamingSessions_ContentId",
-                table: "StreamingSessions",
-                column: "ContentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StreamingSessions_ProfileId_IsActive_Heartbeat",
-                table: "StreamingSessions",
-                columns: new[] { "ProfileId", "IsActive", "LastHeartbeatAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_PlanId",
@@ -860,9 +791,6 @@ namespace NetflixClone.Persistence.Migrations
                 name: "Invoices");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethods");
-
-            migrationBuilder.DropTable(
                 name: "ProfilePreferences");
 
             migrationBuilder.DropTable(
@@ -870,9 +798,6 @@ namespace NetflixClone.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
-
-            migrationBuilder.DropTable(
-                name: "StreamingSessions");
 
             migrationBuilder.DropTable(
                 name: "WatchHistories");

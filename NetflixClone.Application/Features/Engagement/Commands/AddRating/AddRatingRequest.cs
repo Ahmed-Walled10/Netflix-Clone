@@ -9,6 +9,8 @@ namespace NetflixClone.Application.Features.Engagement.Commands.AddRating
         [Required]
         public Guid ContentId { get; set; }
 
+        [Required]
+        public Guid ProfileId { get; set; }
 
         //for the rating
         [Required]

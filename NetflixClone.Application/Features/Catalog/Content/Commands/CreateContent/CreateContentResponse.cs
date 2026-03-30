@@ -1,6 +1,6 @@
 using NetflixClone.Domain.Common.Enums;
 
-namespace NetflixClone.Application.Features.Content.Commands.CreateContent;
+namespace NetflixClone.Application.Features.Catalog.Content.Commands.CreateContent;
 
 public class CreateContentResponse
 {

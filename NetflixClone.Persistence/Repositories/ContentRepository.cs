@@ -1,6 +1,5 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Application.ResourceParameters;
 using NetflixClone.Application.Responces;
 using NetflixClone.Domain.Common.Enums;
@@ -22,7 +21,6 @@ namespace NetflixClone.Persistence.Repositories
             var query = _dbSet.AsNoTracking()
                 .Include(c => c.ContentGenres)
                     .ThenInclude(cg => cg.Genre)
-                .Include(c => c.Ratings)
                 .AsQueryable();
 
             // ── Filters ──────────────────────────────────────────────────
@@ -48,8 +46,8 @@ namespace NetflixClone.Persistence.Repositories
 
             if (parameters.MinRating.HasValue)
             {
-                query = query.Where(c => c.TotalRatings > 0 &&
-                    c.Ratings.Average(r => (decimal)r.Value) >= parameters.MinRating.Value);
+                query = query.Where(c =>
+                    c.TotalRatings > 0 && c.AverageRating >= parameters.MinRating.Value);
             }
 
             if (parameters.MaturityRatings is { Count: > 0 })
@@ -93,14 +91,13 @@ namespace NetflixClone.Persistence.Repositories
             }
 
             // Only show available content
-            if (IsRequestedByAdmin== false)
+            if (IsRequestedByAdmin == false)
                 query = query.Where(c => c.IsAvailable);
 
             // ── Ordering ─────────────────────────────────────────────────
             if (parameters.OrderedByRatingDesending == true)
             {
-                query = query.OrderByDescending(c =>
-                    c.TotalRatings > 0 ? c.Ratings.Average(r => (decimal)r.Value) : 0);
+                query = query.OrderByDescending(c => c.AverageRating);
             }
             else
             {
@@ -130,7 +127,7 @@ namespace NetflixClone.Persistence.Repositories
             CancellationToken cancellationToken = default)
         {
 
-            var query= _dbSet.AsNoTracking()
+            var query = _dbSet.AsNoTracking()
                 .Where(c => c.IsAvailable);
 
             if (IsKidsMode)

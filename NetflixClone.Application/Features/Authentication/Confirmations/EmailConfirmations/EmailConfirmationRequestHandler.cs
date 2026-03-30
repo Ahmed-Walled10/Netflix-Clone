@@ -1,4 +1,4 @@
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NetflixClone.Domain.Entities.Identity;

@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using NetflixClone.Application.Features.Catalog.Queries.Common;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 
 namespace NetflixClone.Application.Features.Catalog.Queries.GetTrendingContent
 {

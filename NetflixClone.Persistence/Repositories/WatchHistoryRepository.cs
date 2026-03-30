@@ -6,18 +6,15 @@ using NetflixClone.Infrastructure.Persistence;
 
 namespace NetflixClone.Persistence.Repositories
 {
-    public class WatchHistoryRepository : IWatchHistoryRepository
+    public class WatchHistoryRepository : BaseRepository<WatchHistory>, IWatchHistoryRepository
     {
-        private readonly NetflixCloneDbContext _context;
-
-        public WatchHistoryRepository(NetflixCloneDbContext context)
-        {
-            _context = context;
-        }
+        public WatchHistoryRepository(NetflixCloneDbContext context) : base(context) { }
 
         public async Task<PagedResult<WatchHistory>> GetWatchHistoryAsync(
             Guid profileId,
             bool continueWatchingOnly = false,
+            int pageNumber = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             var query = _context.WatchHistories.AsNoTracking()
@@ -33,14 +30,18 @@ namespace NetflixClone.Persistence.Repositories
             query = query.OrderByDescending(wh => wh.WatchedAt);
 
             var totalCount = await query.CountAsync(cancellationToken);
-            var items = await query.ToListAsync(cancellationToken);
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
 
             return new PagedResult<WatchHistory>
             {
                 Items = items,
                 TotalCount = totalCount,
-                PageNumber = 1,
-                PageSize = totalCount > 0 ? totalCount : 10
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
         }
 

@@ -1,4 +1,4 @@
-namespace NetflixClone.Application.Persistence;
+namespace NetflixClone.Application.Contracts.Persistence;
 
 /// <summary>
 /// Generic async repository contract. Every entity gets its own

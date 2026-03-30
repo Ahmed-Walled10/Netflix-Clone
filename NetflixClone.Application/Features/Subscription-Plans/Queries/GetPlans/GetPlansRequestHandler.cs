@@ -1,5 +1,5 @@
-﻿using MediatR;
-using NetflixClone.Application.Persistence;
+using MediatR;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Subscriptions;
 
 namespace NetflixClone.Application.Features.Subscription_Plans.Queries.GetPlans
@@ -31,7 +31,7 @@ namespace NetflixClone.Application.Features.Subscription_Plans.Queries.GetPlans
                 VideoQuality = plan.MaxVideoQuality.ToString()
             }).ToList();
 
-            return new GetPlansResponce { Plans = planDtos, Success = true, Message = null };
+            return new GetPlansResponce { Plans = planDtos };
         }
     }
 }

@@ -1,0 +1,116 @@
+﻿ M NetflixClone.Api/Program.cs
+ M NetflixClone.Api/appsettings.Example.json
+ D NetflixClone.Application/Contracts/Infrasructure/IInvoiceService.cs
+ M NetflixClone.Application/Contracts/Infrasructure/IJwtTokenGeneration.cs
+ M NetflixClone.Application/Contracts/Infrasructure/IOtpService.cs
+ M NetflixClone.Application/Contracts/Persistence/IBaseRepository.cs
+ M NetflixClone.Application/Contracts/Persistence/IContentRepository.cs
+ M NetflixClone.Application/Contracts/Persistence/IProfileRepository.cs
+ M NetflixClone.Application/Contracts/Persistence/IRatingRepository.cs
+ M NetflixClone.Application/Contracts/Persistence/IWatchHistoryRepository.cs
+ M NetflixClone.Application/Features/Authentication/Commands/ForgotPassword/ForgotPasswordRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Commands/Login/LoginRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Commands/Logout/LogoutRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Commands/Register/RegisterRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Commands/ResetPassword/ResetPasswordRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Confirmations/EmailConfirmations/EmailConfirmationRequestHandler.cs
+ M NetflixClone.Application/Features/Authentication/Confirmations/ResendEmailConfirmationOtp/ResendEmailConfirmationOtpRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content-genres/Commands/CreateGenre/CreateGenreRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content-genres/Commands/DeleteGenre/DeleteGenreRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/CreateContent/CreateContentRequest.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/CreateContent/CreateContentRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/CreateContent/CreateContentResponse.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/DeleteContent/DeleteContentRequest.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/DeleteContent/DeleteContentRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/MakeContentAvailable/MakeContentAvaliableRequest.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/MakeContentAvailable/MakeContentAvaliableRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/Uploding/UploadContentImages/UploadContentImagesRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/Uploding/UploadContentVideo/UploadContentVideoRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/Uploding/UploadEpisodeThumbnail/UploadEpisodeThumbnailRequest.cs
+ M NetflixClone.Application/Features/Catalog/Content/Commands/Uploding/UploadEpisodeThumbnail/UploadEpisodeThumbnailRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Content/Queries/GetContentById/GetContentByIdRequest.cs
+ M NetflixClone.Application/Features/Catalog/Content/Queries/GetContentById/GetContentByIdRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Person/Commands/CreatePerson/CreatePersonRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Person/Commands/DeletePerson/DeletePersonRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Person/Commands/UploadPersonPhoto/UploadPersonPhotoRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Person/Queries/GetPersonById/GetPersonByIdRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Queries/GetAllCatalog/GetCatalogRequest.cs
+ M NetflixClone.Application/Features/Catalog/Queries/GetAllCatalog/GetCatalogRequestHandler.cs
+ M NetflixClone.Application/Features/Catalog/Queries/GetTrendingContent/GetTrendingContentRequest.cs
+ M NetflixClone.Application/Features/Catalog/Queries/GetTrendingContent/GetTrendingContentRequestHandler.cs
+ M NetflixClone.Application/Features/Engagement/Commands/AddRating/AddRatingRequest.cs
+ M NetflixClone.Application/Features/Engagement/Commands/AddRating/AddRatingRequestHandler.cs
+ M NetflixClone.Application/Features/Engagement/Commands/DeleteRating/DeleteRatingRequestHandler.cs
+ M NetflixClone.Application/Features/Engagement/Queries/GetMyMovieRating/GetMyMovieRatingRequest.cs
+ M NetflixClone.Application/Features/Engagement/Queries/GetMyMovieRating/GetMyMovieRatingRequestHandler.cs
+ M NetflixClone.Application/Features/Engagement/Queries/GetMyRatings/GetMyRatingsRequest.cs
+ M NetflixClone.Application/Features/Engagement/Queries/GetMyRatings/GetMyRatingsRequestHandler.cs
+ M NetflixClone.Application/Features/Engagement/Queries/GetWatchHistory/GetWatchHistoryRequestHandler.cs
+ M NetflixClone.Application/Features/Profiles/Commands/CreateProfile/CreateProfileRequest.cs
+ M NetflixClone.Application/Features/Profiles/Commands/CreateProfile/CreateProfileRequestHandler.cs
+ M NetflixClone.Application/Features/Profiles/Commands/DeleteProfile/DeleteProfileRequest.cs
+ M NetflixClone.Application/Features/Profiles/Commands/DeleteProfile/DeleteProfileRequestHandler.cs
+ M NetflixClone.Application/Features/Profiles/Commands/SwitchProfiles/SwitchProfileRequest.cs
+ M NetflixClone.Application/Features/Profiles/Commands/SwitchProfiles/SwitchProfileRequestHandler.cs
+ M NetflixClone.Application/Features/Profiles/Queries/GetProfiles/GetProfilesRequest.cs
+ M NetflixClone.Application/Features/Profiles/Queries/GetProfiles/GetProfilesRequestHandler.cs
+ M NetflixClone.Application/Features/Streaming/Queries/PlayContent/PlayContentRequestHandler.cs
+ M NetflixClone.Application/Features/Subscription-Plans/Commands/AddPlans/AddPlanRequestHandler.cs
+ M NetflixClone.Application/Features/Subscription-Plans/Commands/DeletePlan/DeletePlanRequestHandler.cs
+ M NetflixClone.Application/Features/Subscription-Plans/Queries/GetPlans/GetPlansRequestHandler.cs
+ M NetflixClone.Application/Features/Subscription-Plans/Queries/GetPlans/GetPlansResponce.cs
+ M NetflixClone.Application/Features/Subscriptions/Commands/HandleStripeWebhook/HandleStripeWebhookRequestHandler.cs
+ M NetflixClone.Application/Features/Subscriptions/Commands/SubscribePlan/SubscribePlanRequestHandler.cs
+ M NetflixClone.Application/Features/Subscriptions/Queries/GetMySubscription/GetMySubscriptionRequestHandler.cs
+ M NetflixClone.Application/NetflixClone.Application.csproj
+ M NetflixClone.Application/Profiles/MappingProfile.cs
+ M NetflixClone.Application/ResourceParameters/BaseResourceParameters.cs
+ M NetflixClone.Application/ResourceParameters/CatalogResourceParameters.cs
+ M NetflixClone.Application/Responces/PagedResult.cs
+ M NetflixClone.Domain/Common/Enums/ContentType.cs
+ M NetflixClone.Domain/Common/Enums/MaturityRating.cs
+ M NetflixClone.Domain/Common/Enums/PaymentAttemptStatus.cs
+ M NetflixClone.Domain/Common/Enums/PersonRole.cs
+ M NetflixClone.Domain/Common/Primitives/AuditableEntity.cs
+ M NetflixClone.Domain/Common/Primitives/SoftDeletableEntity.cs
+ M NetflixClone.Domain/Entities/Catalog/Content.cs
+ M NetflixClone.Domain/Entities/Catalog/Episode.cs
+ M NetflixClone.Domain/Entities/Engagement/WatchHistory.cs
+ M NetflixClone.Domain/Entities/Identity/ApplicationUser.cs
+ M NetflixClone.Domain/Entities/Identity/Profile.cs
+ M NetflixClone.Domain/Entities/Identity/ProfilePreference.cs
+ M NetflixClone.Domain/Entities/Subscriptions/Invoice.cs
+ D NetflixClone.Domain/Entities/Subscriptions/PaymentMethod.cs
+ M NetflixClone.Domain/Entities/Subscriptions/Plan.cs
+ M NetflixClone.Domain/Entities/Subscriptions/Subscription.cs
+ M NetflixClone.Infrastructure/Services/EmailService.cs
+ M NetflixClone.Infrastructure/Services/JwtTokenGeneration.cs
+ M NetflixClone.Infrastructure/Services/OtpService.cs
+ M NetflixClone.Infrastructure/Services/StripeService.cs
+ M NetflixClone.Persistence/Configurations/Catalog/ContentConfiguration.cs
+ M NetflixClone.Persistence/Configurations/Engagement/WatchHistoryConfiguration.cs
+ D NetflixClone.Persistence/Configurations/Subscriptions/PaymentMethodConfiguration.cs
+ D NetflixClone.Persistence/Migrations/20260306230831_InitialCreate.Designer.cs
+ D NetflixClone.Persistence/Migrations/20260306230831_InitialCreate.cs
+ M NetflixClone.Persistence/Migrations/NetflixCloneDbContextModelSnapshot.cs
+ M NetflixClone.Persistence/NetflixCloneDbContext.cs
+ M NetflixClone.Persistence/PersistenceServiceRegistration.cs
+ M NetflixClone.Persistence/Repositories/BaseRepository.cs
+ M NetflixClone.Persistence/Repositories/ContentRepository.cs
+ M NetflixClone.Persistence/Repositories/ProfileRepository.cs
+ M NetflixClone.Persistence/Repositories/RatingRepository.cs
+ M NetflixClone.Persistence/Repositories/SubscriptionRepository.cs
+ M NetflixClone.Persistence/Repositories/WatchHistoryRepository.cs
+ M NetflixClone.Persistence/Seeds/DatabaseSeeder.cs
+?? .config/
+?? NetflixClone.Api/Controllers/
+?? NetflixClone.Domain/Common/Primitives/ISoftDeletable.cs
+?? NetflixClone.Infrastructure/Options/EmailOptions.cs
+?? NetflixClone.Persistence/Migrations/20260329043627_InitialCreate.Designer.cs
+?? NetflixClone.Persistence/Migrations/20260329043627_InitialCreate.cs
+?? NetflixClone.Persistence/Seeds/ContentSeeder.cs
+?? NetflixClone.Persistence/Seeds/PlanSeeder.cs
+?? NetflixClone.Persistence/Seeds/RoleSeeder.cs
+?? NetflixClone.Persistence/Seeds/UserSeeder.cs
+?? schema_dump.cs
+?? status.txt

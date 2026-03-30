@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Domain.Entities.Identity;
 
 namespace NetflixClone.Application.Features.Authentication.Commands.ResetPassword

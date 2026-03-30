@@ -23,7 +23,7 @@ namespace NetflixClone.Application.Features.Engagement.Queries.GetWatchHistory
             var pagedEntities = await _watchHistoryRepository.GetWatchHistoryAsync(
                 request.ProfileId,
                 request.ContinueWatchingOnly,
-                cancellationToken);
+                cancellationToken: cancellationToken);
 
             var responseItems = _mapper.Map<List<GetWatchHistoryResponse>>(pagedEntities.Items);
 

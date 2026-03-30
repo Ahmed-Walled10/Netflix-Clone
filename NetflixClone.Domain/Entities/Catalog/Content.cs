@@ -28,11 +28,10 @@ public class Content : AuditableEntity
 
     public string OriginalLanguage { get; set; } = "en";
 
-    // ── MVP video URL ─────────────────────────────────────────────────
+    // ── Video ─────────────────────────────────────────────────────────
     /// <summary>
-    /// Direct Azure Blob Storage URL for the MP4 file.
+    /// Direct URL for the MP4 file.
     /// Null until an admin uploads and finalizes the video.
-    /// MVP simplification — will be replaced by VideoAsset / HLS manifest in v2.
     /// </summary>
     public string? VideoUrl { get; set; }
 
@@ -65,12 +64,10 @@ public class Content : AuditableEntity
     public long ViewCount { get; set; } = 0;
 
     /// <summary>
-    /// Weighted average of all Rating values for this content.
-    /// Recalculated by a domain event whenever a rating is added, changed, or removed.
-    /// Scale: 0.0 – 5.0
+    /// Average of all Rating values for this content. Scale: 0.0 – 5.0.
+    /// Updated by Application layer handlers when a rating is added, changed, or removed.
     /// </summary>
-    /// <remarks>Requires <c>.Include(c => c.Ratings)</c> to be loaded, otherwise returns 0.</remarks>
-    public decimal AverageRating => TotalRatings == 0 || !Ratings.Any() ? 0 : (decimal)Ratings.Sum(r => r.Value) / TotalRatings;
+    public decimal AverageRating { get; set; } = 0;
 
     /// <summary>Total number of ratings submitted. Used alongside AverageRating.</summary>
     public int TotalRatings { get; set; } = 0;

@@ -6,14 +6,9 @@ using NetflixClone.Infrastructure.Persistence;
 
 namespace NetflixClone.Persistence.Repositories
 {
-    public class SubscriptionRepository : ISubscriptionRepository
+    public class SubscriptionRepository : BaseRepository<Subscription>, ISubscriptionRepository
     {
-        private readonly NetflixCloneDbContext _context;
-
-        public SubscriptionRepository(NetflixCloneDbContext context)
-        {
-            _context = context;
-        }
+        public SubscriptionRepository(NetflixCloneDbContext context) : base(context) { }
 
         public async Task<Subscription?> GetActiveByUserIdAsync(string userId)
         {
@@ -28,7 +23,6 @@ namespace NetflixClone.Persistence.Repositories
         public async Task AddInvoiceAsync(Invoice invoice)
         {
             await _context.Invoices.AddAsync(invoice);
-            await _context.SaveChangesAsync();
         }
     }
 }

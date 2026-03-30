@@ -1,9 +1,8 @@
 using AutoMapper;
 using MediatR;
 using NetflixClone.Application.Features.Catalog.Queries.Common;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Application.Responces;
-using Stripe;
 
 namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
 {

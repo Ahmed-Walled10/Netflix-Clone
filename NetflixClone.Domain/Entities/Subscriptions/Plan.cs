@@ -3,7 +3,7 @@ using NetflixClone.Domain.Common.Enums;
 
 namespace NetflixClone.Domain.Entities.Subscriptions;
 
-public class Plan : BaseEntity
+public class Plan : AuditableEntity
 {
     public string Name { get; set; } = string.Empty;
 
@@ -33,8 +33,6 @@ public class Plan : BaseEntity
 
     /// <summary>False = plan is retired and not shown on the pricing page.</summary>
     public bool IsActive { get; set; } = true;
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // ── Navigation ───────────────────────────────────────────────────
     public ICollection<Subscription> Subscriptions { get; set; } = [];

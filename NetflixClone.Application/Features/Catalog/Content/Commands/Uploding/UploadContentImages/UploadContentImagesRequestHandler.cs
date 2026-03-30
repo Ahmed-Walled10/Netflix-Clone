@@ -1,6 +1,6 @@
 using MediatR;
 using NetflixClone.Application.Contracts.Infrasructure;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using ContentEntity = NetflixClone.Domain.Entities.Catalog.Content;
 
 namespace NetflixClone.Application.Features.Catalog.Content.Commands.UploadContentImages;

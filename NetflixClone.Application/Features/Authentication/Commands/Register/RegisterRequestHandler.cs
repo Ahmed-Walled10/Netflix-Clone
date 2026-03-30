@@ -1,7 +1,5 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NetflixClone.Application.Contracts;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Domain.Entities.Identity;
 
@@ -12,18 +10,15 @@ namespace NetflixClone.Application.Features.Authentication.Commands.Register
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IOtpService _otpService;
-        private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IJwtTokenGeneration _jwtTokenGeneration;
         public RegisterRequestHandler(IJwtTokenGeneration jwtTokenGeneration, 
                                       UserManager<ApplicationUser> userManager,
                                       IOtpService otpService,
-                                      IEmailService emailService,
-                                      IMapper mapper)
+                                      IEmailService emailService)
         {
             _jwtTokenGeneration = jwtTokenGeneration;
             _userManager = userManager;
-            _mapper = mapper;
             _otpService = otpService;
             _emailService = emailService;
 
@@ -38,9 +33,15 @@ namespace NetflixClone.Application.Features.Authentication.Commands.Register
             }
 
             var otp = _otpService.GenerateOtp();
-            var user = _mapper.Map<ApplicationUser>(request);
-            user.EmailConfirmationOtp = otp;
-            user.EmailConfirmationOtpExpiration = DateTime.UtcNow.AddMinutes(20);
+            var user = new ApplicationUser
+            {
+                UserName = request.Email,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                EmailConfirmationOtp = otp,
+                EmailConfirmationOtpExpiration = DateTime.UtcNow.AddMinutes(20)
+            };
 
             var result = await _userManager.CreateAsync(user, request.Password);
 

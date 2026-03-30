@@ -1,7 +1,6 @@
 using MediatR;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Catalog;
 using NetflixClone.Domain.Entities.Engagement;
@@ -48,6 +47,11 @@ public class PlayContentRequestHandler
         // Find the content / episode and its Cloudinary public ID
         string? publicId;
         ContentEntity? content = null;
+        int durationMinutes = 0;
+
+        // Always load the parent content for ViewCount tracking
+        content = await _contentRepo.GetByIdAsync(request.ContentId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Content {request.ContentId} not found.");
 
         if (request.EpisodeId.HasValue)
         {
@@ -59,17 +63,18 @@ public class PlayContentRequestHandler
 
             publicId = episode.CloudinaryPublicId
                 ?? throw new InvalidOperationException("This episode does not have a video uploaded yet.");
+                
+            durationMinutes = episode.DurationMinutes;
         }
         else
         {
-            content = await _contentRepo.GetByIdAsync(request.ContentId, cancellationToken)
-                ?? throw new KeyNotFoundException($"Content {request.ContentId} not found.");
-
             if (!content.IsAvailable)
                 throw new InvalidOperationException("This content is not available for streaming yet.");
 
             publicId = content.CloudinaryPublicId
                 ?? throw new InvalidOperationException("This content does not have a video uploaded yet.");
+                
+            durationMinutes = content.DurationMinutes ?? 0;
         }
 
         // Build the quality-constrained streaming URL
@@ -89,6 +94,7 @@ public class PlayContentRequestHandler
             existingHistory.IsCompleted = false;
             existingHistory.CompletedAt = null;
             existingHistory.StoppedAtSeconds = 0;
+            existingHistory.TotalDurationSeconds = durationMinutes * 60;
             await _watchHistoryRepo.UpdateAsync(existingHistory);
         }
         else
@@ -100,6 +106,7 @@ public class PlayContentRequestHandler
                 ContentId = request.ContentId,
                 EpisodeId = request.EpisodeId,
                 StoppedAtSeconds = 0,
+                TotalDurationSeconds = durationMinutes * 60,
                 IsCompleted = false,
                 WatchedAt = DateTime.UtcNow
             };
@@ -109,13 +116,10 @@ public class PlayContentRequestHandler
 
         await _watchHistoryRepo.SaveChangesAsync(cancellationToken);
 
-        // Increment view count
-        if (content is not null)
-        {
-            content.ViewCount++;
-            await _contentRepo.UpdateAsync(content);
-            await _contentRepo.SaveChangesAsync(cancellationToken);
-        }
+        // Increment view count (content is always loaded above)
+        content.ViewCount++;
+        await _contentRepo.UpdateAsync(content);
+        await _contentRepo.SaveChangesAsync(cancellationToken);
 
         return new PlayContentResponse
         {

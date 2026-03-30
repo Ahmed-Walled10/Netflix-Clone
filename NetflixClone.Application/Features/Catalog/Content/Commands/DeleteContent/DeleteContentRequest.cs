@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace NetflixClone.Application.Features.Content.Commands.DeleteContent;
+namespace NetflixClone.Application.Features.Catalog.Content.Commands.DeleteContent;
 
 public class DeleteContentRequest : IRequest<Unit>
 {

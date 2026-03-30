@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Domain.Entities.Subscriptions;
@@ -120,9 +119,7 @@ namespace NetflixClone.Application.Features.Subscriptions.Commands.HandleStripeW
                 CurrentPeriodStart = periodStart,
                 CurrentPeriodEnd = periodEnd,
                 AutoRenew = true,
-                CancelAtPeriodEnd = false,
-                StripeSubscriptionId = webhookEvent.StripeSubscriptionId,
-                StripeCustomerId = webhookEvent.StripeCustomerId
+                StripeSubscriptionId = webhookEvent.StripeSubscriptionId
             };
 
             await _baseSubRepository.AddAsync(subscription, cancellationToken);
@@ -143,6 +140,7 @@ namespace NetflixClone.Application.Features.Subscriptions.Commands.HandleStripeW
             };
 
             await _subscriptionRepository.AddInvoiceAsync(invoice);
+            await _baseSubRepository.SaveChangesAsync(cancellationToken);
 
             // 6. Change role: NotSubscriber → Subscriber
             if (await _userManager.IsInRoleAsync(user, "NotSubscriber"))

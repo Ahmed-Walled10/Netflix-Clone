@@ -1,6 +1,6 @@
 using AutoMapper;
 using MediatR;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using ContentEntity=NetflixClone.Domain.Entities.Catalog.Content;
 
 namespace NetflixClone.Application.Features.Catalog.Content.Queries.GetContentById

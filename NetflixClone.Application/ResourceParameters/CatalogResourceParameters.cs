@@ -1,11 +1,4 @@
 using NetflixClone.Domain.Common.Enums;
-using NetflixClone.Domain.Entities.Catalog;
-using NetflixClone.Domain.Entities.Engagement;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetflixClone.Application.ResourceParameters
 {

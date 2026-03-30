@@ -21,5 +21,10 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
 
         [StringLength(10)]
         public string? PreferredLanguage { get; set; } = "en";
+
+
+        public string UserId { get; set; }
+
+
     }
 }

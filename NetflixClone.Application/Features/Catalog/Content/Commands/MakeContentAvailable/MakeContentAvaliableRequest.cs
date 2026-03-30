@@ -1,4 +1,4 @@
-﻿
+﻿/*
 using MediatR;
 
 namespace NetflixClone.Application.Features.Catalog.Content.Commands.MakeContentAvailable
@@ -7,4 +7,4 @@ namespace NetflixClone.Application.Features.Catalog.Content.Commands.MakeContent
     {
         public Guid Id { get; set; }
     }
-}
+}*/

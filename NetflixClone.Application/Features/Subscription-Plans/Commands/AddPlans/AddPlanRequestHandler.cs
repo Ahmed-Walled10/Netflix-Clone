@@ -1,12 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MediatR;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Subscriptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetflixClone.Application.Features.Subscription_Plans.Commands.AddPlans
 {

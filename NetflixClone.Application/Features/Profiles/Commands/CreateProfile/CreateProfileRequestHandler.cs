@@ -1,9 +1,8 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Common.Enums;
 using NetflixClone.Domain.Entities.Identity;
 using System.Security.Claims;
@@ -35,7 +34,7 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
         public async Task<CreateProfileResponce> Handle(CreateProfileRequest request, CancellationToken cancellationToken)
         {
 
-            var user = await _profileRepository.GetUserWithSubscriptionsAsync(ClaimTypes.NameIdentifier);
+            var user = await _profileRepository.GetUserWithSubscriptionsAsync(request.UserId);
             if (user == null)
                 throw new UnauthorizedAccessException("User account not found.");
 
@@ -61,8 +60,6 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
             }
 
 
-            request.IsKidsMode = (request.IsKidsMode == true) || (request.Age > 0 && request.Age < 13);
-
             string? pinHash = null;
             if (!string.IsNullOrWhiteSpace(request.PinHash))
             {
@@ -74,6 +71,7 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
 
             var profileToCreate = _mapper.Map<ProfileEntity>(request);
             profileToCreate.UserId = user.Id;
+            profileToCreate.SetAge(request.Age); // enforces IsKidsMode via domain logic
 
             await _profileRepository.AddProfileAsync(profileToCreate);
             await _profileBaseRepository.SaveChangesAsync(cancellationToken);

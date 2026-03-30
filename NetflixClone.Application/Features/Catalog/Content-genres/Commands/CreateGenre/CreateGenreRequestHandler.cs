@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using NetflixClone.Application.Common.Helpers;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Catalog;
 
 namespace NetflixClone.Application.Features.Catalog.ContentGenres.Commands.CreateGenre;

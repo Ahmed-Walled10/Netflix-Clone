@@ -1,9 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NetflixClone.Application.Contracts;
+using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Domain.Entities.Identity;
-using System.Security.Claims;
 
 namespace NetflixClone.Application.Features.Profiles.Commands.SwitchProfile;
 
@@ -28,7 +27,7 @@ public class SwitchProfileRequestHandler : IRequestHandler<SwitchProfileRequest,
         CancellationToken cancellationToken)
     {
 
-        var user = await _profileRepository.GetUserWithSubscriptionsAsync(ClaimTypes.NameIdentifier);
+        var user = await _profileRepository.GetUserWithSubscriptionsAsync(request.UserId);
         if (user is null)
             throw new UnauthorizedAccessException("User account not found.");
 

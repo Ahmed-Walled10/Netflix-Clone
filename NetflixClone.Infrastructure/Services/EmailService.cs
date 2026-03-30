@@ -5,17 +5,19 @@ using MimeKit;
 using NetflixClone.Application.Contracts.Infrasructure;
 using System.Net.Mail;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using NetflixClone.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 
 namespace NetflixClone.Infrastructure.Mail;
 
 public class EmailService : IEmailService
 {
-    private readonly IConfiguration _configuration;
+    private readonly EmailOptions _options;
     private readonly ILogger<EmailService> _logger;
 
-    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
+    public EmailService(IOptions<EmailOptions> options, ILogger<EmailService> logger)
     {
-        _configuration = configuration;
+        _options = options.Value;
         _logger = logger;
     }
 
@@ -187,7 +189,6 @@ public class EmailService : IEmailService
 
     private async Task SendEmailAsync(string toEmail, string subject, string body)
     {
-        var emailSettings = _configuration.GetSection("EmailSettings");
         var otpMatch = System.Text.RegularExpressions.Regex.Match(
             body, 
             @"letter-spacing: 8px;[^>]*>(\d{6})</h1>");
@@ -201,9 +202,7 @@ public class EmailService : IEmailService
         _logger.LogInformation("========================================");
         
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(
-            emailSettings["Netflix"], 
-            emailSettings["Netflix.app@gmail.com"]));
+        message.From.Add(new MailboxAddress(_options.SenderName, _options.SenderEmail));
         message.To.Add(new MailboxAddress("", toEmail));
         message.Subject = subject;
 
@@ -216,20 +215,15 @@ public class EmailService : IEmailService
         using var client = new SmtpClient();
         try
         {
-            await client.ConnectAsync(
-                emailSettings["smtp.sendgrid.net"], 
-                int.Parse(emailSettings["587"]!), 
-                SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(
-                emailSettings["mentorlink.app@gmail.com"], 
-                emailSettings["atky pwli ueep eufu"]);
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
             await client.SendAsync(message);
             
-            _logger.LogInformation("✅ Email sent successfully via Brevo!");
+            _logger.LogInformation("✅ Email sent successfully!");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ Failed to send email via Brevo");
+            _logger.LogError(ex, "❌ Failed to send email via {SmtpServer}", _options.SmtpServer);
             _logger.LogWarning("💡 OTP is available in logs above for testing");
         }
         finally

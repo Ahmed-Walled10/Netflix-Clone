@@ -3,7 +3,7 @@ using NetflixClone.Domain.Common.Enums;
 
 namespace NetflixClone.Domain.Entities.Subscriptions;
 
-public class Invoice : BaseEntity
+public class Invoice : AuditableEntity
 {
     // ── Foreign key ──────────────────────────────────────────────────
     public Guid SubscriptionId { get; set; }
@@ -33,8 +33,6 @@ public class Invoice : BaseEntity
 
     // ── Email tracking ────────────────────────────────────────────────
     public DateTime? EmailSentAt { get; set; }
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // ── Navigation ───────────────────────────────────────────────────
     public Subscription Subscription { get; set; } = null!;

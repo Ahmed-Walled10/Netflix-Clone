@@ -19,7 +19,7 @@ namespace NetflixClone.Application.Features.Engagement.Queries.GetMyMovieRating
 
         public async Task<GetMyMovieRatingResponse?> Handle(GetMyMovieRatingRequest request, CancellationToken cancellationToken)
         {
-            var rating = await _ratingRepository.GetMyMovieRatingAsync(request.ContentId, cancellationToken);
+            var rating = await _ratingRepository.GetMyMovieRatingAsync(request.ContentId, request.ProfileId, cancellationToken);
 
             // Return null (404) if this profile hasn't rated this content yet
             if (rating == null)

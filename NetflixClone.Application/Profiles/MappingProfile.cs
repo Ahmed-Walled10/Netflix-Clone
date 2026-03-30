@@ -1,7 +1,7 @@
 using AutoMapper;
 using NetflixClone.Application.Features.Catalog.ContentGenres.Commands.CreateGenre;
 using NetflixClone.Application.Features.Catalog.Person.Commands.CreatePerson;
-using NetflixClone.Application.Features.Content.Commands.CreateContent;
+using NetflixClone.Application.Features.Catalog.Content.Commands.CreateContent;
 using NetflixClone.Application.Features.Engagement.Commands.AddRating;
 using NetflixClone.Application.Features.Engagement.Queries.GetMovieRatings;
 using NetflixClone.Application.Features.Engagement.Queries.GetMyMovieRating;

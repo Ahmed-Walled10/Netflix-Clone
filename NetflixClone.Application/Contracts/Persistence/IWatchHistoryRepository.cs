@@ -13,6 +13,8 @@ namespace NetflixClone.Application.Contracts.Persistence
         Task<PagedResult<WatchHistory>> GetWatchHistoryAsync(
             Guid profileId,
             bool continueWatchingOnly = false,
+            int pageNumber = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         /// <summary>

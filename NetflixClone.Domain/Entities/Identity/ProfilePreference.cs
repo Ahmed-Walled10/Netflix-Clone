@@ -2,11 +2,10 @@ using NetflixClone.Domain.Common.Primitives;
 
 namespace NetflixClone.Domain.Entities.Identity;
 
-public class ProfilePreference : BaseEntity
+public class ProfilePreference : AuditableEntity
 {
     // ── Foreign key ──────────────────────────────────────────────────
     public Guid ProfileId { get; set; }
-
 
     /// <summary>
     /// The ID of the Genre or Person this preference points to.
@@ -20,8 +19,6 @@ public class ProfilePreference : BaseEntity
     /// Avoids a join when rendering the preferences list.
     /// </summary>
     public string ReferenceName { get; set; } = string.Empty;
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // ── Navigation ───────────────────────────────────────────────────
     public Profile Profile { get; set; } = null!;

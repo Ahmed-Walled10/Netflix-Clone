@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Infrastructure.Persistence;
 using NetflixClone.Persistence.Repositories;

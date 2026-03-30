@@ -1,5 +1,5 @@
 using MediatR;
-using NetflixClone.Application.Persistence;
+using NetflixClone.Application.Contracts.Persistence;
 using PersonEntity = NetflixClone.Domain.Entities.Catalog.Person;
 
 namespace NetflixClone.Application.Features.Catalog.Person.Commands.DeletePerson;

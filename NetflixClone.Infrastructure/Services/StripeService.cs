@@ -110,8 +110,10 @@ namespace NetflixClone.Infrastructure.Services
                     var subService = new SubscriptionService();
                     var stripeSub = subService.Get(subscriptionId);
 
-                    periodStart = stripeSub.CurrentPeriodStart;
-                    periodEnd = stripeSub.CurrentPeriodEnd;
+                    // Stripe SDK removed CurrentPeriod dates from the top-level Subscription object. They are now in Items.
+                    var firstItem = stripeSub.Items?.Data?.FirstOrDefault();
+                    periodStart = firstItem?.CurrentPeriodStart ?? DateTime.UtcNow;
+                    periodEnd = firstItem?.CurrentPeriodEnd ?? DateTime.UtcNow.AddMonths(1);
 
                     // Get the latest invoice for amount and PDF
                     if (!string.IsNullOrEmpty(stripeSub.LatestInvoiceId))
@@ -121,7 +123,7 @@ namespace NetflixClone.Infrastructure.Services
 
                         invoiceId = stripeInvoice.Id;
                         invoicePdfUrl = stripeInvoice.InvoicePdf;
-                        amountPaid = (decimal)(stripeInvoice.AmountPaid ?? 0) / 100m;
+                        amountPaid = (decimal)stripeInvoice.AmountPaid / 100m;
                         currency = stripeInvoice.Currency;
                     }
                 }

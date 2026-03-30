@@ -1,11 +1,6 @@
-﻿using NetflixClone.Domain.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NetflixClone.Domain.Entities.Identity;
 
-namespace NetflixClone.Application.Contracts
+namespace NetflixClone.Application.Contracts.Infrasructure
 {
     public interface IJwtTokenGeneration
     {

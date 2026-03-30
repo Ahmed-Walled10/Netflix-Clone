@@ -1,7 +1,5 @@
 using MediatR;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Persistence;
-using System.Security.Claims;
 using ProfileEntity = NetflixClone.Domain.Entities.Identity.Profile;
 
 namespace NetflixClone.Application.Features.Profiles.Commands.DeleteProfile;
@@ -21,7 +19,7 @@ public class DeleteProfileRequestHandler : IRequestHandler<DeleteProfileRequest,
 
     public async Task<Unit> Handle(DeleteProfileRequest request, CancellationToken cancellationToken)
     {
-        var user = await _profileRepository.GetUserWithProfilesAsync(ClaimTypes.NameIdentifier);
+        var user = await _profileRepository.GetUserWithProfilesAsync(request.UserId);
         if (user is null)
             throw new UnauthorizedAccessException("User account not found.");
 

@@ -22,7 +22,7 @@ public class GetProfilesRequestHandler : IRequestHandler<GetProfilesRequest, Lis
         GetProfilesRequest request,
         CancellationToken cancellationToken)
     {
-        var user = await _profileRepository.GetUserWithProfilesAsync(ClaimTypes.NameIdentifier);
+        var user = await _profileRepository.GetUserWithProfilesAsync(request.userId);
         if (user is null)
             throw new UnauthorizedAccessException("User account not found.");
 

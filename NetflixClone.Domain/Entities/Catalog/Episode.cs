@@ -17,7 +17,7 @@ public class Episode : AuditableEntity
     public int? ReleaseYear { get; set; }
     public string? ThumbnailUrl { get; set; }
 
-    /// <summary>Direct Azure Blob MP4 URL for this episode. Null until uploaded.</summary>
+    /// <summary>Direct URL for this episode's MP4 video. Null until uploaded.</summary>
     public string? VideoUrl { get; set; }
 
     /// <summary>Cloudinary public ID of the uploaded video. Used to build quality-specific streaming URLs.</summary>

@@ -41,5 +41,4 @@ public class ApplicationUser : IdentityUser
     public ICollection<Profile> Profiles { get; set; } = [];
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     public ICollection<Subscriptions.Subscription> Subscriptions { get; set; } = [];
-    public ICollection<Subscriptions.PaymentMethod> PaymentMethods { get; set; } = [];
 }

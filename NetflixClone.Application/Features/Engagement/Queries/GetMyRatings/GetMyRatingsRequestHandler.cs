@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using NetflixClone.Application.Contracts.Persistence;
 using NetflixClone.Application.Responces;
+using NetflixClone.Domain.Entities.Identity;
 
 namespace NetflixClone.Application.Features.Engagement.Queries.GetMyRatings
 {
@@ -20,7 +21,7 @@ namespace NetflixClone.Application.Features.Engagement.Queries.GetMyRatings
 
         public async Task<PagedResult<GetMyRatingsResponse>> Handle(GetMyRatingsRequest request, CancellationToken cancellationToken)
         {
-            var pagedEntities = await _ratingRepository.GetMyRatingsAsync( cancellationToken);
+            var pagedEntities = await _ratingRepository.GetMyRatingsAsync(request.profileId, cancellationToken: cancellationToken);
 
             var responseItems = _mapper.Map<List<GetMyRatingsResponse>>(pagedEntities.Items);
 

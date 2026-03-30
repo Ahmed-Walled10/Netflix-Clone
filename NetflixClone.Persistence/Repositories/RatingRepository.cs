@@ -7,14 +7,9 @@ using NetflixClone.Infrastructure.Persistence;
 
 namespace NetflixClone.Persistence.Repositories
 {
-    public class RatingRepository : IRatingRepository
+    public class RatingRepository : BaseRepository<Rating>, IRatingRepository
     {
-        private readonly NetflixCloneDbContext _context;
-
-        public RatingRepository(NetflixCloneDbContext context)
-        {
-            _context = context;
-        }
+        public RatingRepository(NetflixCloneDbContext context) : base(context) { }
 
         public async Task<PagedResult<Rating>> GetRatingsAsync(
             RatingsResourceParameters parameters,
@@ -81,34 +76,40 @@ namespace NetflixClone.Persistence.Repositories
         }
 
         public async Task<PagedResult<Rating>> GetMyRatingsAsync(
+            Guid profileId,
+            int pageNumber = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            // Note: ProfileId filtering should be handled by the caller/handler
-            // This returns all ratings — the handler can add .Where(r => r.ProfileId == ...) 
-            // For now, returning all ratings ordered by date
             var query = _context.Ratings.AsNoTracking()
+                .Where(r => r.ProfileId == profileId)
                 .Include(r => r.Content)
                 .OrderByDescending(r => r.RatedAt);
 
             var totalCount = await query.CountAsync(cancellationToken);
-            var items = await query.ToListAsync(cancellationToken);
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
 
             return new PagedResult<Rating>
             {
                 Items = items,
                 TotalCount = totalCount,
-                PageNumber = 1,
-                PageSize = totalCount > 0 ? totalCount : 10
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
         }
 
         public async Task<Rating?> GetMyMovieRatingAsync(
             Guid contentId,
+            Guid profileId,
             CancellationToken cancellationToken = default)
         {
             return await _context.Ratings.AsNoTracking()
                 .Include(r => r.Profile)
-                .FirstOrDefaultAsync(r => r.ContentId == contentId, cancellationToken);
+                .FirstOrDefaultAsync(r => r.ContentId == contentId && r.ProfileId == profileId, cancellationToken);
         }
     }
 }

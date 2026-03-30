@@ -1,7 +1,6 @@
 using MediatR;
-using NetflixClone.Application.Features.Catalog.Content.Commands.UploadEpisodeThumbnail;
 
-namespace NetflixClone.Application.Features.Content.Commands.UploadEpisodeThumbnail;
+namespace NetflixClone.Application.Features.Catalog.Content.Commands.UploadEpisodeThumbnail;
 
     /// <summary>
     /// Uploads a thumbnail image for a specific Episode.

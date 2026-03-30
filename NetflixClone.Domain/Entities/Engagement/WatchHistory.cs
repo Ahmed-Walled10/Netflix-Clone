@@ -16,8 +16,7 @@ public class WatchHistory : BaseEntity
     public int StoppedAtSeconds { get; set; } = 0;
 
     /// <summary>Full runtime in seconds. Copied from Content/Episode at first watch.</summary>
-     
-     // public int TotalDurationSeconds { get; set; }
+    public int TotalDurationSeconds { get; set; }
 
     /// <summary>
     /// True when the user has watched at least 90% of the content.
