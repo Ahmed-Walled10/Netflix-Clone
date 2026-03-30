@@ -27,7 +27,7 @@
 
 ## What Is This?
 
-StreamVault is a fully functional backend for a Netflix-style streaming service. It handles everything from user registration and subscription billing to video delivery and engagement tracking — built the way a real production system would be.
+Netflic-Clone is a fully functional backend for a Netflix-style streaming service. It handles everything from user registration and subscription billing to video delivery and engagement tracking — built the way a real production system would be.
 
 ---
 
