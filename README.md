@@ -10,7 +10,7 @@
   ██   ████ ███████    ██    ██      ███████ ██ ██   ██
 </pre>
 
-</div>
+
 
 **A production-grade streaming platform backend built with Clean Architecture, CQRS, and real-world patterns.**
 
