@@ -7,6 +7,7 @@ using NetflixClone.Application.Features.Authentication.Commands.ForgotPassword;
 using NetflixClone.Application.Features.Authentication.Commands.ResetPassword;
 using NetflixClone.Application.Features.Authentication.Commands.Register;
 using NetflixClone.Application.Features.Authentication.Commands.Login;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NetflixClone.Api.Controller
 {
@@ -20,6 +21,7 @@ namespace NetflixClone.Api.Controller
             _mediator = mediator;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
@@ -32,6 +34,7 @@ namespace NetflixClone.Api.Controller
             });
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
@@ -39,6 +42,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(LogoutRequest logoutRequest)
         {
@@ -46,6 +50,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(EmailConfirmationRequest emailConfirmationRequest)
         {
@@ -58,6 +63,7 @@ namespace NetflixClone.Api.Controller
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPost("resend-confirmation-otp")]
         public async Task<IActionResult> ResendConfirmationOtp(ResendEmailConfirmationOtpRequest
             resendEmailConfirmationOtpRequest)
@@ -72,6 +78,7 @@ namespace NetflixClone.Api.Controller
             return Ok(new { message = "OTP resent successfully! Please check your email." });
         }
 
+        [AllowAnonymous]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
         {
@@ -84,6 +91,7 @@ namespace NetflixClone.Api.Controller
             return Ok(new { message = "If your email exists, you will receive a password reset OTP shortly." });
         }
 
+        [AllowAnonymous]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
         {

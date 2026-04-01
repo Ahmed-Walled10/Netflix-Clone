@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetflixClone.Application.Features.Subscription_Plans.Commands.AddPlans;
@@ -17,6 +18,7 @@ namespace NetflixClone.Api.Controller
             _mediator = mediator;
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost]
         public async Task<IActionResult> AddPlan(AddPlanRequest addPlanRequest)
         {
@@ -25,6 +27,7 @@ namespace NetflixClone.Api.Controller
 
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpDelete]
         public async Task<IActionResult> DeletePlan(DeletePlanRequest deletePlanRequest)
         {
@@ -33,6 +36,7 @@ namespace NetflixClone.Api.Controller
 
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpGet]
         public async Task<IActionResult> GetPlans(GetPlansRequest getPlansRequest)
         {

@@ -81,7 +81,7 @@ namespace NetflixClone.Infrastructure.Services
             return new CheckoutSessionResult(session.Id, session.Url);
         }
 
-        public Task<StripeWebhookEvent> ConstructWebhookEventAsync(string json, string signature)
+        public async Task<StripeWebhookEvent> ConstructWebhookEventAsync(string json, string signature)
         {
             // Verify the signature — throws StripeException if invalid
             var stripeEvent = EventUtility.ConstructEvent(json, signature, _options.WebhookSecret);
@@ -108,7 +108,7 @@ namespace NetflixClone.Infrastructure.Services
                 if (!string.IsNullOrEmpty(subscriptionId))
                 {
                     var subService = new SubscriptionService();
-                    var stripeSub = subService.Get(subscriptionId);
+                    var stripeSub = await subService.GetAsync(subscriptionId);
 
                     // Stripe SDK removed CurrentPeriod dates from the top-level Subscription object. They are now in Items.
                     var firstItem = stripeSub.Items?.Data?.FirstOrDefault();
@@ -119,7 +119,7 @@ namespace NetflixClone.Infrastructure.Services
                     if (!string.IsNullOrEmpty(stripeSub.LatestInvoiceId))
                     {
                         var invoiceService = new InvoiceService();
-                        var stripeInvoice = invoiceService.Get(stripeSub.LatestInvoiceId);
+                        var stripeInvoice = await invoiceService.GetAsync(stripeSub.LatestInvoiceId);
 
                         invoiceId = stripeInvoice.Id;
                         invoicePdfUrl = stripeInvoice.InvoicePdf;
@@ -142,7 +142,7 @@ namespace NetflixClone.Infrastructure.Services
                 Metadata: metadata
             );
 
-            return Task.FromResult(result);
+            return result;
         }
     }
 }

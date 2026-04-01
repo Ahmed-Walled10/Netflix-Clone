@@ -21,8 +21,8 @@ namespace NetflixClone.Application.Features.Catalog.Content.Queries.GetContentBy
         public async Task<GetContentByIdResponse> Handle(GetContentByIdRequest request, CancellationToken cancellationToken)
         {
             var content = await _contentRepository.GetByIdAsync(request.Id, cancellationToken);
-
-            if (content == null)
+            var ContentMaturityRating = (int)content.MaturityRating;
+            if (content == null || (ContentMaturityRating<=13 && request.IsUserKid==true))
             {
                 throw new KeyNotFoundException($"Content with Id {request.Id} was not found.");
             }

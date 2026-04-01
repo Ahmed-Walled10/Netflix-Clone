@@ -22,6 +22,7 @@ public class SwitchProfileRequestHandler : IRequestHandler<SwitchProfileRequest,
         _profileRepository = profileRepository;
     }
 
+
     public async Task<SwitchProfileResponse> Handle(
         SwitchProfileRequest request,
         CancellationToken cancellationToken)

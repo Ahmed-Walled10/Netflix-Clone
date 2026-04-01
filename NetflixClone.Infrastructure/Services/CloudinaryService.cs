@@ -32,8 +32,17 @@ namespace NetflixClone.Infrastructure.Services
                 Folder = folder,
                 UseFilename = true,
                 UniqueFilename = true,
-                Overwrite = false
+                Overwrite = false,
+
+                EagerTransforms = new List<Transformation>
+                {
+                    new Transformation().RawTransformation("sp_sd"),
+                    new Transformation().RawTransformation("sp_hd"),
+                    new Transformation().RawTransformation("sp_full_hd"),
+                },
+                EagerAsync = true  // don't block the upload response
             };
+
 
             // UploadLargeAsync supports chunked uploads for files > 100 MB
             var result = await _cloudinary.UploadLargeAsync(uploadParams);
@@ -89,6 +98,32 @@ namespace NetflixClone.Infrastructure.Services
 
             return url;
         }
+
+
+        // ── returns HLS .m3u8 manifest URL
+        public string GetHlsUrl(string publicId, VideoQuality quality)
+        {
+            // Cloudinary streaming profiles:
+            // sp_hd    → 720p
+            // sp_full_hd → 1080p
+            // sp_4k    → 2160p
+            string streamingProfile = quality switch
+            {
+                VideoQuality.HD_720p => "sp_hd",
+                VideoQuality.FullHD_1080p => "sp_full_hd",
+                VideoQuality.UHD_4K => "sp_4k",
+                _ => "sp_hd"
+            };
+
+            // Build the HLS manifest URL
+            // Format: https://res.cloudinary.com/{cloud}/video/upload/{sp_hd}/{publicId}.m3u8
+            var url = _cloudinary.Api.UrlVideoUp
+                .Transform(new Transformation().RawTransformation(streamingProfile))
+                .BuildUrl($"{publicId}.m3u8");
+
+            return url;
+        }
+
 
         // ── Delete Asset ─────────────────────────────────────────────────────────
         public async Task<bool> DeleteAssetAsync(string publicId, string resourceType)

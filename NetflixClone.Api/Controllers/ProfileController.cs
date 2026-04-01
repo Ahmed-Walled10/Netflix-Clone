@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetflixClone.Application.Features.Engagement.Queries.GetMyRatings;
 using NetflixClone.Application.Features.Engagement.Queries.GetWatchHistory;
 using NetflixClone.Application.Features.Profiles.Commands.CreateProfile;
 using NetflixClone.Application.Features.Profiles.Commands.DeleteProfile;
+using NetflixClone.Application.Features.Profiles.Commands.LoginToProfile;
 using NetflixClone.Application.Features.Profiles.Commands.SwitchProfile;
 using NetflixClone.Application.Features.Profiles.Queries.GetProfiles;
 using NetflixClone.Application.Features.Subscriptions.Queries.GetMySubscription;
@@ -31,13 +33,13 @@ namespace NetflixClone.Api.Controller
         }
 
 
-
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpPost]
         public async Task<IActionResult> CreateProfile(CreateProfileRequest createProfileRequest)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrWhiteSpace(userId))
-                return Unauthorized("Active profile token is required.");
+                return Unauthorized("Please Login in first.");
 
             createProfileRequest.UserId = userId;
 
@@ -45,24 +47,56 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpDelete]
         public async Task<IActionResult> DeleteProfile()
         {
             var ProfileId= GetProfileId();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please Login in first.");
 
-            var request= new DeleteProfileRequest { ProfileId = ProfileId };
+            var request= new DeleteProfileRequest {
+                ProfileId = ProfileId,
+                UserId = userId
+            };
 
             await _mediator.Send(request);
             return NoContent();
         }
 
+
+
+        //Login profile endpoint
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginProfile(LoginToProfileRequest loginToProfileRequest)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please Login in first.");
+
+            loginToProfileRequest.UserId = userId;
+
+            var result = await _mediator.Send(loginToProfileRequest);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpPost("switch")]
         public async Task<IActionResult> SwitchProfile(SwitchProfileRequest switchProfileRequest)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please Login first.");
+
+            switchProfileRequest.UserId = userId;
+
             var result = await _mediator.Send(switchProfileRequest);
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet]
         public async Task<IActionResult> GetProfiles()
         {
@@ -80,6 +114,7 @@ namespace NetflixClone.Api.Controller
         }
 
         //Engagment feature
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("watch-history")]
         public async Task<IActionResult> GetMyWatchHistory(bool ContinueWatchingOnly)
         {
@@ -97,6 +132,7 @@ namespace NetflixClone.Api.Controller
         }
 
         //Engagment feature
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("my-ratings")]
         public async Task<IActionResult> GetMyRatings()
         {

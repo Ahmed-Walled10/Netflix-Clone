@@ -7,6 +7,7 @@ using NetflixClone.Infrastructure.Services;
 using NetflixClone.Infrastructure.Mail;
 using NetflixClone.Infrastructure.Persistence.Seeds;
 using NetflixClone.Persistence;
+using NetflixClone.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,20 +25,9 @@ builder.Services.AddAutoMapper(
     typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly);
 
 // ── Application Services ───────────────────────────────────────────────────
-builder.Services.AddScoped<IJwtTokenGeneration, JwtTokenGeneration>();
-builder.Services.AddScoped<IOtpService, OtpService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-
-// ── Infrastructure (Stripe) ────────────────────────────────────────────────
-builder.Services.Configure<NetflixClone.Infrastructure.Options.StripeOptions>(builder.Configuration.GetSection("Stripe"));
-builder.Services.AddScoped<IStripeService, NetflixClone.Infrastructure.Services.StripeService>();
-
-// ── Infrastructure (Cloudinary) ────────────────────────────────────────────
-builder.Services.Configure<NetflixClone.Infrastructure.Options.CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
-builder.Services.AddScoped<ICloudinaryService, NetflixClone.Infrastructure.Services.CloudinaryService>();
-
-// ── Infrastructure (Email) ─────────────────────────────────────────────────
-builder.Services.Configure<NetflixClone.Infrastructure.Options.EmailOptions>(builder.Configuration.GetSection("EmailSettings"));
+// The Application Layer doesn't currently register its own services in its own 
+// registration method, so these continue to be registered in infrastructure
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // ── JWT Bearer Authentication ──────────────────────────────────────────────
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

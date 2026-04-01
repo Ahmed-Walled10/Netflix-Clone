@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetflixClone.Application.Features.Engagement.Commands.AddRating;
@@ -14,8 +15,6 @@ namespace NetflixClone.Api.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    // Optionally add [Authorize] at the top level 
-    // [Authorize] 
     public class EngagementController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -32,7 +31,7 @@ namespace NetflixClone.Api.Controller
             return profileId;
         }
 
-
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpPost("content/{id}/rating")]
         public async Task<IActionResult> AddRating([FromRoute]Guid id, [FromBody] AddRatingRequest addRatingRequest)
         {
@@ -45,6 +44,7 @@ namespace NetflixClone.Api.Controller
             return CreatedAtAction(nameof(GetMyMovieRating), new { Mid = id }, result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpDelete("rating/{ratingId}")]
         public async Task<IActionResult> DeleteRating([FromRoute] Guid ratingId)
         {
@@ -52,6 +52,7 @@ namespace NetflixClone.Api.Controller
             return NoContent();
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("content/{id}/ratings")]
         public async Task<IActionResult> GetMovieRatings([FromRoute]Guid id,[FromQuery] RatingsResourceParameters ratingsResourceParameters)
         {
@@ -66,7 +67,7 @@ namespace NetflixClone.Api.Controller
 
         }
 
-
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("content/{Mid}/rating")]
         public async Task<IActionResult> GetMyMovieRating([FromRoute] Guid Mid)
         {

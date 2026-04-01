@@ -1,9 +1,12 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetflixClone.Application.Features.Subscriptions.Commands.SubscribePlan;
 using NetflixClone.Application.Features.Subscriptions.Queries.GetMySubscription;
 using System.Security.Claims;
+using System.IO;
+using NetflixClone.Application.Features.Subscriptions.Commands.HandleStripeWebhook;
 
 namespace NetflixClone.Api.Controller
 {
@@ -17,6 +20,7 @@ namespace NetflixClone.Api.Controller
             _mediator = mediator;
         }
 
+        [Authorize]
         [HttpPost("Subscripe")]
         public async Task<IActionResult> Subscripe(SubscribePlanRequest subscribePlanRequest)
         {
@@ -24,6 +28,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("my-subscription")]
         public async Task<IActionResult> GetMysubscription()
         {
@@ -39,6 +44,17 @@ namespace NetflixClone.Api.Controller
 
         }
 
+        [AllowAnonymous]
+        [HttpPost("webhook")]
+        public async Task<IActionResult> StripeWebhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            var signatureHeader = Request.Headers["Stripe-Signature"].ToString();
 
+            var command = new HandleStripeWebhookRequest(json, signatureHeader);
+            await _mediator.Send(command);
+
+            return Ok();
+        }
     }
 }

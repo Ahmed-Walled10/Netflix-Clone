@@ -17,6 +17,7 @@ using NetflixClone.Application.Features.Catalog.Content.Commands.DeleteContent;
 using NetflixClone.Application.Features.Catalog.Content.Commands.UploadEpisodeThumbnail;
 using NetflixClone.Application.Features.Streaming.Queries.PlayContent;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NetflixClone.Api.Controller
 {
@@ -37,7 +38,7 @@ namespace NetflixClone.Api.Controller
             return profileId;
         }
 
-
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("content")]
         public async Task<IActionResult> AddContent(CreateContentRequest createContentRequest)
         {
@@ -45,6 +46,7 @@ namespace NetflixClone.Api.Controller
             return CreatedAtAction(nameof(GetContentById), new { id = result.Id }, result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpDelete("content/{id}")]
         public async Task<IActionResult> DeleteContent([FromRoute] Guid id)
         {
@@ -52,11 +54,18 @@ namespace NetflixClone.Api.Controller
             return NoContent();
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("content/{id}")]
         public async Task<IActionResult> GetContentById([FromRoute] Guid id)
         {
-            //add is kids mode
-            var result = await _mediator.Send(new GetContentByIdRequest { Id = id });
+
+            bool.TryParse(User.FindFirstValue("isKidsMode"), out var isKidsMode);
+            var result = await _mediator.Send(new GetContentByIdRequest {
+                Id = id,
+                IsUserKid= isKidsMode
+            });
+
+
             if (result == null)
             {
                 return NotFound();
@@ -65,6 +74,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("content/{id}/images")]
         public async Task<IActionResult> UploadContentImage([FromRoute] Guid id, [FromForm] IFormFile? thumbnail, [FromForm] IFormFile? heroImage)
         {
@@ -86,6 +96,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("content/{id}/video")]
         public async Task<IActionResult> UploadContentVideo([FromRoute] Guid id, [FromQuery] Guid? episodeId, [FromForm] IFormFile file)
         {
@@ -101,6 +112,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("episodes/{episodeId}/thumbnail")]
         public async Task<IActionResult> UploadEpisodeThumbnail([FromRoute] Guid episodeId, [FromForm] IFormFile file)
         {
@@ -115,6 +127,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("genres")]
         public async Task<IActionResult> AddGenre(CreateGenreRequest createGenreRequest)
         {
@@ -122,6 +135,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpDelete("genres/{id}")]
         public async Task<IActionResult> DeleteGenre([FromRoute] Guid id)
         {
@@ -129,6 +143,7 @@ namespace NetflixClone.Api.Controller
             return NoContent();
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("person")]
         public async Task<IActionResult> AddPerson(CreatePersonRequest createPersonRequest)
         {
@@ -136,6 +151,7 @@ namespace NetflixClone.Api.Controller
             return CreatedAtAction(nameof(GetPersonById), new { id = result.Id }, result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpDelete("person/{id}")]
         public async Task<IActionResult> DeletePerson([FromRoute] Guid id)
         {
@@ -143,6 +159,7 @@ namespace NetflixClone.Api.Controller
             return NoContent();
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("person/{id}/photo")]
         public async Task<IActionResult> UploadPersonImage([FromRoute] Guid id, [FromForm] IFormFile file)
         {
@@ -157,6 +174,7 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("person/{id}")]
         public async Task<IActionResult> GetPersonById([FromRoute] Guid id)
         {
@@ -168,15 +186,22 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("content")]    
         public async Task<IActionResult> GetAllContent([FromQuery] GetCatalogRequest getCatalogRequest)
         {
+            bool isAdmin = false;
+            if (User.IsInRole("SuperAdmin") || User.IsInRole("ContentManager"))
+                 isAdmin = true;
+
             bool.TryParse(User.FindFirstValue("isKidsMode"), out var isKidsMode);
             getCatalogRequest.IsKidsMode = isKidsMode;
+            getCatalogRequest.IsRequestedByAdmin = isAdmin;
             var result = await _mediator.Send(getCatalogRequest);
             return Ok(result);
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("trending")]
         public async Task<IActionResult> GetTrendingContent()
         {
@@ -186,6 +211,7 @@ namespace NetflixClone.Api.Controller
         }
 
         //Streaimng feature
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpGet("content/{Id}/play")]
         public async Task<IActionResult> PlayContent(Guid ContentId, PlayContentRequest playContentRequest )
         {

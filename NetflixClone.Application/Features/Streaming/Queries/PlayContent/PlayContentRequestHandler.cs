@@ -121,9 +121,14 @@ public class PlayContentRequestHandler
         await _contentRepo.UpdateAsync(content);
         await _contentRepo.SaveChangesAsync(cancellationToken);
 
+        // Replace with:
+        var hlsUrl = _cloudinaryService.GetHlsUrl(publicId, maxQuality);
+
         return new PlayContentResponse
         {
-            StreamingUrl = streamingUrl,
+            StreamingUrl = streamingUrl,      // fallback for browsers that support MP4 directly
+            ManifestUrl = hlsUrl,      // HLS .m3u8 manifest for HLS.js / Video.js
+            Protocol = "HLS",
             Quality = maxQuality.ToString()
         };
     }

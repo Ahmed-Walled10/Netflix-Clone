@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetflixClone.Application.Contracts.Infrasructure;
-using NetflixClone.Domain.Common.Enums;
+using NetflixClone.Domain.Entities.Identity;
+using NetflixClone.Infrastructure.Options;
 using NetflixClone.Domain.Entities.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,11 +12,11 @@ namespace NetflixClone.Infrastructure.Services;
 
 public class JwtTokenGeneration : IJwtTokenGeneration
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtOptions _options;
 
-    public JwtTokenGeneration(IConfiguration configuration)
+    public JwtTokenGeneration(IOptions<JwtOptions> options)
     {
-        _configuration = configuration;
+        _options = options.Value;
     }
     public string GenerateJwtToken(ApplicationUser user, List<string> roles)
     {
@@ -61,13 +62,13 @@ public class JwtTokenGeneration : IJwtTokenGeneration
     private string BuildToken(List<Claim> claims, TimeSpan expiry)
     {
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]!));
+            Encoding.UTF8.GetBytes(_options.SecretKey));
 
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JwtSettings:Issuer"],
-            audience: _configuration["JwtSettings:Audience"],
+            issuer: _options.Issuer,
+            audience: _options.Audience,
             claims: claims,
             expires: DateTime.UtcNow.Add(expiry),
             signingCredentials: credentials

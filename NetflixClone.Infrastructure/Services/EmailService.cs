@@ -225,6 +225,7 @@ public class EmailService : IEmailService
         {
             _logger.LogError(ex, "❌ Failed to send email via {SmtpServer}", _options.SmtpServer);
             _logger.LogWarning("💡 OTP is available in logs above for testing");
+            throw;
         }
         finally
         {
