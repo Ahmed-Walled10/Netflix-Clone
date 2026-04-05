@@ -1,14 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Application.Contracts.Persistence;
-using NetflixClone.Application.Features.Profiles.Commands.SwitchProfile;
 using NetflixClone.Domain.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetflixClone.Application.Features.Profiles.Commands.LoginToProfile
 {
@@ -35,13 +29,13 @@ namespace NetflixClone.Application.Features.Profiles.Commands.LoginToProfile
             LoginToProfileRequest request,
             CancellationToken cancellationToken)
         {
-            var user = await _profileRepository.GetUserWithSubscriptionsAsync(request.UserId);
+            var user = await _profileRepository.GetUserWithProfilesAsync(request.UserId);
             if (user is null)
                 throw new UnauthorizedAccessException("User account not found.");
 
 
 
-            var profile = user.Profiles.FirstOrDefault(p => p.Id == request.ProfileId);
+            var profile = user.Profiles.FirstOrDefault(p => p.Id.ToString() == request.ProfileId);
             if (profile is null)
                 throw new KeyNotFoundException(
                     $"Profile {request.ProfileId} does not exist or does not belong to this account.");

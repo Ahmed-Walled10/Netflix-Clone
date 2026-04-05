@@ -31,6 +31,16 @@ namespace NetflixClone.Persistence.Repositories
                 ?? throw new KeyNotFoundException($"User with Id {userId} was not found.");
         }
 
+        public async Task<ApplicationUser> GetUserWithSubscriptionsAndProfilesAsync(string userId)
+        {
+            return await _context.Users
+                .Include(u => u.Subscriptions)
+                    .ThenInclude(s => s.Plan)
+                .Include(u => u.Profiles)
+                .FirstOrDefaultAsync(u => u.Id == userId)
+                ?? throw new KeyNotFoundException($"User with Id {userId} was not found.");
+        }
+
         public async Task AddProfileAsync(Profile profile)
         {
             await _context.Profiles.AddAsync(profile);

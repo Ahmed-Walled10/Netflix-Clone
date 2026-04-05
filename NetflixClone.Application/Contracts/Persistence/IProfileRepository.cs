@@ -6,6 +6,7 @@ namespace NetflixClone.Application.Contracts.Persistence
     {
         Task<ApplicationUser> GetUserWithSubscriptionsAsync(string userId);
         Task<ApplicationUser> GetUserWithProfilesAsync(string userId);
+        Task<ApplicationUser> GetUserWithSubscriptionsAndProfilesAsync(string userId);
         Task AddProfileAsync(Profile profile);
 
     }

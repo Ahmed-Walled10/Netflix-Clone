@@ -32,9 +32,25 @@ namespace NetflixClone.Api.Controller
             return profileId;
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
+        [HttpGet]
+        public async Task<IActionResult> GetProfiles()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Active profile token is required.");
+
+            var request = new GetProfilesRequest
+            {
+                userId = userId
+            };
+
+            var result = await _mediator.Send(request);
+            return Ok(result);
+        }
 
         [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateProfile(CreateProfileRequest createProfileRequest)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -65,8 +81,6 @@ namespace NetflixClone.Api.Controller
             return NoContent();
         }
 
-
-
         //Login profile endpoint
         [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
         [HttpPost("login")]
@@ -96,22 +110,6 @@ namespace NetflixClone.Api.Controller
             return Ok(result);
         }
 
-        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
-        [HttpGet]
-        public async Task<IActionResult> GetProfiles()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrWhiteSpace(userId))
-                return Unauthorized("Active profile token is required.");
-
-            var request = new GetProfilesRequest
-            {
-                userId = userId
-            };
-
-            var result = await _mediator.Send(request);
-            return Ok(result);
-        }
 
         //Engagment feature
         [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]

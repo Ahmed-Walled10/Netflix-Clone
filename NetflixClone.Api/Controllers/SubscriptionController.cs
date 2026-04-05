@@ -7,6 +7,7 @@ using NetflixClone.Application.Features.Subscriptions.Queries.GetMySubscription;
 using System.Security.Claims;
 using System.IO;
 using NetflixClone.Application.Features.Subscriptions.Commands.HandleStripeWebhook;
+using System.Reflection.Metadata.Ecma335;
 
 namespace NetflixClone.Api.Controller
 {
@@ -24,6 +25,12 @@ namespace NetflixClone.Api.Controller
         [HttpPost("Subscripe")]
         public async Task<IActionResult> Subscripe(SubscribePlanRequest subscribePlanRequest)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please login to your account.");
+
+            subscribePlanRequest.UserId = userId;
+
             var result = await _mediator.Send(subscribePlanRequest);
             return Ok(result);
         }

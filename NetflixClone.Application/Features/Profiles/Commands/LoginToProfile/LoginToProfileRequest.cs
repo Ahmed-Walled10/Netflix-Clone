@@ -1,10 +1,5 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetflixClone.Application.Features.Profiles.Commands.LoginToProfile
 {
@@ -12,10 +7,10 @@ namespace NetflixClone.Application.Features.Profiles.Commands.LoginToProfile
     {
         public string UserId { get; set; } = string.Empty;
 
-        public Guid ProfileId { get; set; }
+        public string ProfileId { get; set; }
 
 
-        [StringLength(10)]
+        [StringLength(6, MinimumLength = 6)]
         public string? Pin { get; set; }
 
     }

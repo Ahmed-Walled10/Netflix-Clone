@@ -36,11 +36,12 @@ namespace NetflixClone.Api.Controller
 
         }
 
-        [Authorize(Roles = "SuperAdmin,ContentManager")]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetPlans(GetPlansRequest getPlansRequest)
+        public async Task<IActionResult> GetPlans()
         {
-            var result = await _mediator.Send(getPlansRequest);
+            var request = new GetPlansRequest();
+            var result = await _mediator.Send(request);
             return Ok(result);
 
         }

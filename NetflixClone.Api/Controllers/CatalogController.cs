@@ -190,6 +190,7 @@ namespace NetflixClone.Api.Controller
         [HttpGet("content")]    
         public async Task<IActionResult> GetAllContent([FromQuery] GetCatalogRequest getCatalogRequest)
         {
+            var profileId = GetProfileId();
             bool isAdmin = false;
             if (User.IsInRole("SuperAdmin") || User.IsInRole("ContentManager"))
                  isAdmin = true;
@@ -205,6 +206,7 @@ namespace NetflixClone.Api.Controller
         [HttpGet("trending")]
         public async Task<IActionResult> GetTrendingContent()
         {
+            var profileId = GetProfileId();
             bool.TryParse(User.FindFirstValue("isKidsMode"), out var isKidsMode);
             var result = await _mediator.Send(new GetTrendingContentRequest { IsKidsMode = isKidsMode });
             return Ok(result);

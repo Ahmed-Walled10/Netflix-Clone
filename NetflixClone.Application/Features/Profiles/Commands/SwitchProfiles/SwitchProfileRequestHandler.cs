@@ -28,7 +28,7 @@ public class SwitchProfileRequestHandler : IRequestHandler<SwitchProfileRequest,
         CancellationToken cancellationToken)
     {
 
-        var user = await _profileRepository.GetUserWithSubscriptionsAsync(request.UserId);
+        var user = await _profileRepository.GetUserWithProfilesAsync(request.UserId);
         if (user is null)
             throw new UnauthorizedAccessException("User account not found.");
 

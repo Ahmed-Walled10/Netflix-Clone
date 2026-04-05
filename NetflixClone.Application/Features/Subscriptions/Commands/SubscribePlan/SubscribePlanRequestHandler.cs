@@ -41,8 +41,8 @@ namespace NetflixClone.Application.Features.Subscriptions.Commands.SubscribePlan
             if (!plan.IsActive)
                 throw new InvalidOperationException("This plan is no longer available.");
 
-            if (string.IsNullOrEmpty(plan.StripePriceId))
-                throw new InvalidOperationException($"Plan '{plan.Name}' doesn't have a configured StripePriceId.");
+            //if (string.IsNullOrEmpty(plan.StripePriceId))
+              //  throw new InvalidOperationException($"Plan '{plan.Name}' doesn't have a configured StripePriceId.");
 
             // 3. Check for existing active subscription
             var activeSub = await _subscriptionRepository.GetActiveByUserIdAsync(user.Id);
@@ -59,7 +59,7 @@ namespace NetflixClone.Application.Features.Subscriptions.Commands.SubscribePlan
 
             // 5. Create Stripe Checkout Session and return the URL
             var session = await _stripeService.CreateCheckoutSessionAsync(
-                customerId, plan.StripePriceId, plan.Id);
+                customerId, "price_1TIhEbGmVrdIZN837jlC3t1f", plan.Id);
 
             return new SubscribePlanResponse(session.Url);
         }

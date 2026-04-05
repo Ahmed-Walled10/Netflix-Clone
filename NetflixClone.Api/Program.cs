@@ -21,12 +21,23 @@ builder.Services.AddMediatR(cfg =>
         typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly));
 
 // ── AutoMapper ─────────────────────────────────────────────────────────────
+// AutoMapper v13+ ships AddAutoMapper() in the core package (DI extension pkg removed).
+// v16 changed: every overload requires Action<IMapperConfigurationExpression> as first arg.
 builder.Services.AddAutoMapper(
-    typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly);
+    cfg => { },   // no extra configuration needed — profiles are scanned from the assembly
+    typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler));
+
+//-- CORS ───────────────────────────────────────────────────────────────
+builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
+       p.WithOrigins("http://localhost:5173")
+       .AllowAnyHeader()
+       .AllowAnyMethod()));
+//--------------------------
 
 // ── Application Services ───────────────────────────────────────────────────
 // The Application Layer doesn't currently register its own services in its own 
 // registration method, so these continue to be registered in infrastructure
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // ── JWT Bearer Authentication ──────────────────────────────────────────────
@@ -53,6 +64,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.None);
 // ── Controllers & Swagger ──────────────────────────────────────────────────
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -98,6 +110,18 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api/subscription/webhook"))
+    {
+        context.Request.EnableBuffering();
+    }
+    await next();
+});
+
+//app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

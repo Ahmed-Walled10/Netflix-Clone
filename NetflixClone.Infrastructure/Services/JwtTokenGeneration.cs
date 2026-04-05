@@ -3,9 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using NetflixClone.Application.Contracts.Infrasructure;
 using NetflixClone.Domain.Entities.Identity;
 using NetflixClone.Infrastructure.Options;
-using NetflixClone.Domain.Entities.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace NetflixClone.Infrastructure.Services;
@@ -18,9 +18,11 @@ public class JwtTokenGeneration : IJwtTokenGeneration
     {
         _options = options.Value;
     }
+
+    public int RefreshTokenExpiryDays => _options.RefreshTokenExpiryDays;
+
     public string GenerateJwtToken(ApplicationUser user, List<string> roles)
     {
-
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -35,7 +37,7 @@ public class JwtTokenGeneration : IJwtTokenGeneration
         foreach (var role in roles)
             claims.Add(new Claim(ClaimTypes.Role, role));
 
-        return BuildToken(claims, TimeSpan.FromDays(1));
+        return BuildToken(claims, TimeSpan.FromMinutes(_options.AccessTokenExpiryMinutes));
     }
 
     public string GenerateProfileJwtToken(ApplicationUser user, Profile profile, List<string> roles)
@@ -57,6 +59,20 @@ public class JwtTokenGeneration : IJwtTokenGeneration
             claims.Add(new Claim(ClaimTypes.Role, role));
 
         return BuildToken(claims, TimeSpan.FromMinutes(30));
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomBytes = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+        return Convert.ToBase64String(randomBytes);
+    }
+
+    public string HashToken(string token)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+        return Convert.ToBase64String(bytes);
     }
 
     private string BuildToken(List<Claim> claims, TimeSpan expiry)

@@ -34,7 +34,7 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
         public async Task<CreateProfileResponce> Handle(CreateProfileRequest request, CancellationToken cancellationToken)
         {
 
-            var user = await _profileRepository.GetUserWithSubscriptionsAsync(request.UserId);
+            var user = await _profileRepository.GetUserWithSubscriptionsAndProfilesAsync(request.UserId);
             if (user == null)
                 throw new UnauthorizedAccessException("User account not found.");
 

@@ -42,6 +42,7 @@ namespace NetflixClone.Persistence
             services.AddScoped<IRatingRepository, RatingRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<IWatchHistoryRepository, WatchHistoryRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
             return services;
         }

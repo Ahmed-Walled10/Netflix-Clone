@@ -7,8 +7,9 @@ namespace NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog
 {
     public class GetCatalogRequest : IRequest<PagedResult<GetCatalogResponce>>
     {
-            public CatalogResourceParameters CatalogResourceParameters { get; set; }
-            public bool IsRequestedByAdmin { get; set; }
+            public CatalogResourceParameters CatalogResourceParameters { get; set; } = new();
+
+            public bool IsRequestedByAdmin { get; set; } = false;
 
             public bool IsKidsMode { get; set; }
     }
