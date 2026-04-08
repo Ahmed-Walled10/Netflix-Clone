@@ -34,6 +34,30 @@ public class Plan : AuditableEntity
     /// <summary>False = plan is retired and not shown on the pricing page.</summary>
     public bool IsActive { get; set; } = true;
 
-    // ── Navigation ───────────────────────────────────────────────────
     public ICollection<Subscription> Subscriptions { get; set; } = [];
+
+    // ── Behavior ─────────────────────────────────────────────────────
+    public void Update(UpdatePlanData data)
+    {
+        if (data.Name != null) Name = data.Name;
+        if (data.DisplayName != null) DisplayName = data.DisplayName;
+        if (data.Price.HasValue) Price = data.Price.Value;
+        if (data.BillingPeriod.HasValue) BillingPeriod = data.BillingPeriod.Value;
+        if (data.MaxProfiles.HasValue) MaxProfiles = data.MaxProfiles.Value;
+        if (data.MaxVideoQuality.HasValue) MaxVideoQuality = data.MaxVideoQuality.Value;
+        if (data.StripePriceId != null) StripePriceId = data.StripePriceId;
+        if (data.IsActive.HasValue) IsActive = data.IsActive.Value;
+    }
+}
+
+public class UpdatePlanData
+{
+    public string? Name { get; set; }
+    public string? DisplayName { get; set; }
+    public decimal? Price { get; set; }
+    public BillingPeriod? BillingPeriod { get; set; }
+    public int? MaxProfiles { get; set; }
+    public VideoQuality? MaxVideoQuality { get; set; }
+    public string? StripePriceId { get; set; }
+    public bool? IsActive { get; set; }
 }

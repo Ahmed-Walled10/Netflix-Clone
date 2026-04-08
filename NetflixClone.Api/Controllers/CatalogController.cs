@@ -47,6 +47,40 @@ namespace NetflixClone.Api.Controller
         }
 
         [Authorize(Roles = "SuperAdmin,ContentManager")]
+        [HttpPatch("content/{id}")]
+        public async Task<IActionResult> UpdateContent([FromRoute]Guid id, [FromBody] NetflixClone.Application.Features.Catalog.Content.Commands.UpdateContent.UpdateContentRequest requestDto)
+        {
+            var command = new NetflixClone.Application.Features.Catalog.Content.Commands.UpdateContent.UpdateContentCommand
+            {
+                ContentId = id,
+                Data = new NetflixClone.Domain.Entities.Catalog.UpdateContentData
+                {
+                    ContentType = requestDto.ContentType,
+                    Title = requestDto.Title,
+                    OriginalTitle = requestDto.OriginalTitle,
+                    Slug = requestDto.Slug,
+                    Description = requestDto.Description,
+                    Tagline = requestDto.Tagline,
+                    ReleaseYear = requestDto.ReleaseYear,
+                    EndYear = requestDto.EndYear,
+                    DurationMinutes = requestDto.DurationMinutes,
+                    MaturityRating = requestDto.MaturityRating,
+                    OriginalLanguage = requestDto.OriginalLanguage,
+                    VideoUrl = requestDto.VideoUrl,
+                    CloudinaryPublicId = requestDto.CloudinaryPublicId,
+                    TrailerUrl = requestDto.TrailerUrl,
+                    ThumbnailUrl = requestDto.ThumbnailUrl,
+                    HeroImageUrl = requestDto.HeroImageUrl,
+                    IsAvailable = requestDto.IsAvailable,
+                    IsOriginal = requestDto.IsOriginal
+                }
+            };
+
+            await _mediator.Send(command);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpDelete("content/{id}")]
         public async Task<IActionResult> DeleteContent([FromRoute] Guid id)
         {
@@ -144,6 +178,24 @@ namespace NetflixClone.Api.Controller
         }
 
         [Authorize(Roles = "SuperAdmin,ContentManager")]
+        [HttpPatch("genres/{id}")]
+        public async Task<IActionResult> UpdateGenre([FromRoute] Guid id, [FromBody] NetflixClone.Application.Features.Catalog.ContentGenres.Commands.UpdateGenre.UpdateGenreRequest requestDto)
+        {
+            var command = new NetflixClone.Application.Features.Catalog.ContentGenres.Commands.UpdateGenre.UpdateGenreCommand
+            {
+                GenreId = id,
+                Data = new NetflixClone.Domain.Entities.Catalog.UpdateGenreData
+                {
+                    Name = requestDto.Name,
+                    Slug = requestDto.Slug
+                }
+            };
+
+            await _mediator.Send(command);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
         [HttpPost("person")]
         public async Task<IActionResult> AddPerson(CreatePersonRequest createPersonRequest)
         {
@@ -156,6 +208,27 @@ namespace NetflixClone.Api.Controller
         public async Task<IActionResult> DeletePerson([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new DeletePersonRequest { Id = id });
+            return NoContent();
+        }
+
+        [Authorize(Roles = "SuperAdmin,ContentManager")]
+        [HttpPatch("person/{id}")]
+        public async Task<IActionResult> UpdatePerson([FromRoute] Guid id, [FromBody] NetflixClone.Application.Features.Catalog.Person.Commands.UpdatePerson.UpdatePersonRequest requestDto)
+        {
+            var command = new NetflixClone.Application.Features.Catalog.Person.Commands.UpdatePerson.UpdatePersonCommand
+            {
+                PersonId = id,
+                Data = new NetflixClone.Domain.Entities.Catalog.UpdatePersonData
+                {
+                    FullName = requestDto.FullName,
+                    Slug = requestDto.Slug,
+                    Bio = requestDto.Bio,
+                    BirthDate = requestDto.BirthDate,
+                    PhotoUrl = requestDto.PhotoUrl
+                }
+            };
+
+            await _mediator.Send(command);
             return NoContent();
         }
 
@@ -214,12 +287,17 @@ namespace NetflixClone.Api.Controller
 
         //Streaimng feature
         [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
-        [HttpGet("content/{Id}/play")]
-        public async Task<IActionResult> PlayContent(Guid ContentId, PlayContentRequest playContentRequest )
+        [HttpGet("content/{id}/play")]
+        public async Task<IActionResult> PlayContent([FromRoute] Guid id, [FromQuery] PlayContentRequest playContentRequest )
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please Login first.");
+
             var profileId = GetProfileId();
-            playContentRequest.ContentId = ContentId;
+            playContentRequest.ContentId = id;
             playContentRequest.ProfileId = profileId;
+            playContentRequest.UserId = userId;
 
             var result = await _mediator.Send(playContentRequest);
             return Ok(result);

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -146,7 +146,33 @@ namespace NetflixClone.Api.Controller
 
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
+        [HttpPatch("update")]
+        public async Task<IActionResult> UpdateProfile([FromBody] NetflixClone.Application.Features.Profiles.Commands.UpdateProfile.UpdateProfileRequest requestDto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized("Please Login first.");
 
+            var profileId = GetProfileId();
+
+            var command = new NetflixClone.Application.Features.Profiles.Commands.UpdateProfile.UpdateProfileCommand
+            {
+                ProfileId = profileId,
+                UserId = userId,
+                Data = new NetflixClone.Domain.Entities.Identity.UpdateProfileData
+                {
+                    Name = requestDto.Name,
+                    Age = requestDto.Age,
+                    AvatarUrl = requestDto.AvatarUrl,
+                    PinHash = requestDto.PinHash,
+                    PreferredLanguage = requestDto.PreferredLanguage
+                }
+            };
+
+            await _mediator.Send(command);
+            return NoContent();
+        }
 
     }
 }

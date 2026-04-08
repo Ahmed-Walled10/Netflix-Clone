@@ -46,4 +46,22 @@ public class Profile : AuditableEntity
     public ICollection<Engagement.WatchHistory> WatchHistories { get; set; } = [];
     public ICollection<Engagement.Rating> Ratings { get; set; } = [];
 
+    // ── Behavior ─────────────────────────────────────────────────────
+    public void Update(UpdateProfileData data)
+    {
+        if (data.Name != null) Name = data.Name;
+        if (data.AvatarUrl != null) AvatarUrl = data.AvatarUrl;
+        if (data.Age.HasValue) SetAge(data.Age.Value);
+        if (data.PinHash != null) PinHash = data.PinHash;
+        if (data.PreferredLanguage != null) PreferredLanguage = data.PreferredLanguage;
+    }
+}
+
+public class UpdateProfileData
+{
+    public string? Name { get; set; }
+    public string? AvatarUrl { get; set; }
+    public int? Age { get; set; }
+    public string? PinHash { get; set; }
+    public string? PreferredLanguage { get; set; }
 }

@@ -84,8 +84,25 @@ namespace NetflixClone.Api.Controller
 
         }
 
+        [Authorize(Roles = "SuperAdmin,ContentManager,Subscriber")]
+        [HttpPatch("rating/{ratingId}")]
+        public async Task<IActionResult> UpdateRating([FromRoute] Guid ratingId, [FromBody] NetflixClone.Application.Features.Engagement.Commands.UpdateRating.UpdateRatingRequest requestDto)
+        {
+            var profileId = GetProfileId();
 
+            var command = new NetflixClone.Application.Features.Engagement.Commands.UpdateRating.UpdateRatingCommand
+            {
+                RatingId = ratingId,
+                ProfileId = profileId,
+                Data = new NetflixClone.Domain.Entities.Engagement.UpdateRatingData
+                {
+                    Value = requestDto.Value,
+                    Review = requestDto.Review
+                }
+            };
 
-
+            await _mediator.Send(command);
+            return NoContent();
+        }
     }
 }

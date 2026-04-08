@@ -117,7 +117,7 @@ public class EmailService : IEmailService
         await SendEmailAsync(email, subject, body);
     }
 
-    public async Task SendInvoiceEmailAsync(string email, string firstName, string planName, decimal amount, string cardBrand, string cardLast4, DateTime paymentDate, DateTime periodEnd)
+    /*public async Task SendInvoiceEmailAsync(string email, string firstName, string planName, decimal amount, string cardBrand, string cardLast4, DateTime paymentDate, DateTime periodEnd)
     {
         var subject = $"Your Netflix Invoice - {planName}";
         var body = $@"
@@ -183,6 +183,124 @@ public class EmailService : IEmailService
          </body>
          </html>
         ";
+
+        await SendEmailAsync(email, subject, body);
+    }*/
+    public async Task SendInvoiceEmailAsync(string email, string firstName, string planName, decimal amount, string cardBrand, string cardLast4, DateTime paymentDate, DateTime periodEnd)
+    {
+        var subject = $"Payment confirmed – {planName}";
+        var body = $@"
+        <!DOCTYPE html>
+        <html lang=""en"">
+        <head>
+          <meta charset=""UTF-8"" />
+          <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+          <title>Payment Confirmed</title>
+          <style>
+            body {{ margin: 0; padding: 0; background: #0a0a0a; font-family: Arial, sans-serif; }}
+            .wrap {{ max-width: 520px; margin: 40px auto; background: #0d0d0d; border-radius: 12px; overflow: hidden; }}
+            .accent {{ height: 3px; background: #E50914; }}
+            .body {{ padding: 36px 40px 0; }}
+            .logo {{ font-size: 20px; font-weight: 900; color: #E50914; letter-spacing: 2px; margin-bottom: 32px; }}
+
+            .status-row {{ display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }}
+            .check-icon {{ width: 40px; height: 40px; border-radius: 50%; background: #1c1c1c; border: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }}
+            .check-icon svg {{ width: 18px; height: 18px; }}
+            .status-title {{ font-size: 18px; font-weight: 700; color: #fff; margin: 0 0 3px; }}
+            .status-sub {{ font-size: 13px; color: #666; margin: 0; }}
+            .status-sub strong {{ color: #bbb; font-weight: 400; }}
+
+            .divider {{ height: 1px; background: #1e1e1e; margin-bottom: 28px; }}
+
+            .invoice {{ background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; margin-bottom: 24px; }}
+            .invoice-header {{ padding: 14px 18px; border-bottom: 1px solid #1e1e1e; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #444; text-transform: uppercase; }}
+            .row {{ display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; }}
+            .row-divider {{ height: 1px; background: #191919; margin: 0 18px; }}
+            .row-label {{ font-size: 13px; color: #555; }}
+            .row-value {{ font-size: 13px; color: #ccc; }}
+            .card-badge {{ background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 4px; padding: 2px 8px; font-size: 10px; font-weight: 700; color: #888; letter-spacing: 0.05em; margin-right: 6px; }}
+            .total-row {{ background: #0a0a0a; border-top: 1px solid #1e1e1e; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; }}
+            .total-label {{ font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.07em; }}
+            .total-amount {{ font-size: 22px; font-weight: 700; color: #fff; }}
+
+            .note {{ font-size: 13px; color: #3a3a3a; line-height: 1.7; margin: 0 0 36px; }}
+            .note span {{ color: #555; }}
+            .footer {{ padding: 16px 40px; border-top: 1px solid #191919; display: flex; justify-content: space-between; align-items: center; }}
+            .footer-left {{ font-size: 11px; color: #333; }}
+            .footer-links {{ display: flex; gap: 16px; }}
+            .footer-links span {{ font-size: 11px; color: #333; }}
+          </style>
+        </head>
+        <body>
+          <div class=""wrap"">
+            <div class=""accent""></div>
+            <div class=""body"">
+
+              <div class=""logo"">STREAMVAULT</div>
+
+              <div class=""status-row"">
+                <div class=""check-icon"">
+                  <svg viewBox=""0 0 24 24"" fill=""none"" stroke=""#22c55e"" stroke-width=""2.5"" stroke-linecap=""round"" stroke-linejoin=""round"">
+                    <polyline points=""20 6 9 17 4 12""/>
+                  </svg>
+                </div>
+                <div>
+                  <p class=""status-title"">Payment successful</p>
+                  <p class=""status-sub"">Hi <strong>{firstName}</strong> — your subscription is confirmed.</p>
+                </div>
+              </div>
+
+              <div class=""divider""></div>
+
+              <div class=""invoice"">
+                <div class=""invoice-header"">Invoice details</div>
+
+                <div class=""row"">
+                  <span class=""row-label"">Plan</span>
+                  <span class=""row-value"">{planName}</span>
+                </div>
+                <div class=""row-divider""></div>
+
+                <div class=""row"">
+                  <span class=""row-label"">Payment date</span>
+                  <span class=""row-value"">{paymentDate:MMM dd, yyyy}</span>
+                </div>
+                <div class=""row-divider""></div>
+
+                <div class=""row"">
+                  <span class=""row-label"">Payment method</span>
+                  <div>
+                    <span class=""card-badge"">{cardBrand.ToUpper()}</span>
+                    <span class=""row-value"">·· {cardLast4}</span>
+                  </div>
+                </div>
+                <div class=""row-divider""></div>
+
+                <div class=""row"">
+                  <span class=""row-label"">Subscription ends</span>
+                  <span class=""row-value"">{periodEnd:MMM dd, yyyy}</span>
+                </div>
+
+                <div class=""total-row"">
+                  <span class=""total-label"">Total charged</span>
+                  <span class=""total-amount"">${amount:F2}</span>
+                </div>
+              </div>
+
+              <p class=""note"">Enjoy unlimited streaming of movies and TV shows. Your next billing date is <span>{periodEnd:MMM dd, yyyy}</span>.</p>
+            </div>
+
+            <div class=""footer"">
+              <span class=""footer-left"">© 2026 StreamVault, Inc.</span>
+              <div class=""footer-links"">
+                <span>Privacy</span>
+                <span>Help</span>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+    ";
 
         await SendEmailAsync(email, subject, body);
     }

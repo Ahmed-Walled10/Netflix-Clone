@@ -79,4 +79,49 @@ public class Content : AuditableEntity
     public ICollection<ContentPerson> ContentPersons { get; set; } = [];
     public ICollection<Engagement.WatchHistory> WatchHistories { get; set; } = [];
     public ICollection<Engagement.Rating> Ratings { get; set; } = [];
+
+    // ── Behavior ─────────────────────────────────────────────────────
+    public void Update(UpdateContentData data)
+    {
+        if (data.ContentType.HasValue) ContentType = data.ContentType.Value;
+        if (data.Title != null) Title = data.Title;
+        if (data.OriginalTitle != null) OriginalTitle = data.OriginalTitle;
+        if (data.Slug != null) Slug = data.Slug;
+        if (data.Description != null) Description = data.Description;
+        if (data.Tagline != null) Tagline = data.Tagline;
+        if (data.ReleaseYear.HasValue) ReleaseYear = data.ReleaseYear.Value;
+        if (data.EndYear.HasValue) EndYear = data.EndYear.Value;
+        if (data.DurationMinutes.HasValue) DurationMinutes = data.DurationMinutes.Value;
+        if (data.MaturityRating.HasValue) MaturityRating = data.MaturityRating.Value;
+        if (data.OriginalLanguage != null) OriginalLanguage = data.OriginalLanguage;
+        if (data.VideoUrl != null) VideoUrl = data.VideoUrl;
+        if (data.CloudinaryPublicId != null) CloudinaryPublicId = data.CloudinaryPublicId;
+        if (data.TrailerUrl != null) TrailerUrl = data.TrailerUrl;
+        if (data.ThumbnailUrl != null) ThumbnailUrl = data.ThumbnailUrl;
+        if (data.HeroImageUrl != null) HeroImageUrl = data.HeroImageUrl;
+        if (data.IsAvailable.HasValue) IsAvailable = data.IsAvailable.Value;
+        if (data.IsOriginal.HasValue) IsOriginal = data.IsOriginal.Value;
+    }
+}
+
+public class UpdateContentData
+{
+    public ContentType? ContentType { get; set; }
+    public string? Title { get; set; }
+    public string? OriginalTitle { get; set; }
+    public string? Slug { get; set; }
+    public string? Description { get; set; }
+    public string? Tagline { get; set; }
+    public int? ReleaseYear { get; set; }
+    public int? EndYear { get; set; }
+    public int? DurationMinutes { get; set; }
+    public MaturityRating? MaturityRating { get; set; }
+    public string? OriginalLanguage { get; set; }
+    public string? VideoUrl { get; set; }
+    public string? CloudinaryPublicId { get; set; }
+    public string? TrailerUrl { get; set; }
+    public string? ThumbnailUrl { get; set; }
+    public string? HeroImageUrl { get; set; }
+    public bool? IsAvailable { get; set; }
+    public bool? IsOriginal { get; set; }
 }

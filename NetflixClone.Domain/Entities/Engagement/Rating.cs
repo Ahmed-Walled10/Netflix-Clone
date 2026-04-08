@@ -31,4 +31,17 @@ public class Rating : AuditableEntity
     // ── Navigation ───────────────────────────────────────────────────
     public Identity.Profile Profile { get; set; } = null!;
     public Catalog.Content Content { get; set; } = null!;
+
+    // ── Behavior ─────────────────────────────────────────────────────
+    public void Update(UpdateRatingData data)
+    {
+        if (data.Value.HasValue) Value = data.Value.Value;
+        if (data.Review != null) Review = data.Review;
+    }
+}
+
+public class UpdateRatingData
+{
+    public int? Value { get; set; }
+    public string? Review { get; set; }
 }

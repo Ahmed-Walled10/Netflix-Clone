@@ -42,7 +42,7 @@ namespace NetflixClone.Api.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-           // if (User.Identity?.IsAuthenticated == true)
+            //if (User.Identity?.IsAuthenticated == true)
              //   return BadRequest("Already logged in.");
 
             var result = await _mediator.Send(loginRequest);
