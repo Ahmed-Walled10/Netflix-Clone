@@ -64,6 +64,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "https://your-app.vercel.app",       // if React is on Vercel
+                "https://yoursite.monsterasp.net"    // if React is served from same host
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.None);
 // ── Controllers & Swagger ──────────────────────────────────────────────────
 builder.Services.AddControllers();
@@ -124,7 +137,7 @@ app.Use(async (context, next) =>
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("AllowFrontend");
 app.MapControllers();
 
 app.Run();
