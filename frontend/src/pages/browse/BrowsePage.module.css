@@ -1,0 +1,291 @@
+.browse-page {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  padding-bottom: var(--space-4xl);
+}
+
+/* ── Hero Banner ────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: 80vh;
+  min-height: 500px;
+  max-height: 800px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 var(--content-padding);
+  padding-bottom: 15%;
+  margin-top: calc(-1 * var(--navbar-height));
+}
+
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__gradient-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(transparent, var(--bg-primary));
+  z-index: 1;
+}
+
+.hero__gradient-left {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(20,20,20,0.8) 0%, rgba(20,20,20,0.4) 30%, transparent 60%);
+  z-index: 1;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 550px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.hero__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: rgba(229, 9, 20, 0.15);
+  border: 1px solid var(--netflix-red);
+  border-radius: var(--radius-full);
+  padding: 4px 14px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--netflix-red);
+  margin-bottom: var(--space-md);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-tight);
+  margin-bottom: var(--space-md);
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+}
+
+.hero__desc {
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-xl);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+}
+
+.hero__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.hero__rating {
+  color: var(--success);
+  font-weight: var(--fw-semibold);
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+/* ── Content Rows ───────────────────────────────────────────── */
+.content-section {
+  padding: 0 var(--content-padding);
+  margin-top: -80px;
+  position: relative;
+  z-index: 3;
+}
+
+.content-row {
+  margin-bottom: var(--space-2xl);
+}
+
+.content-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.content-row__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+}
+
+.content-row__slider {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-bottom: var(--space-sm);
+  position: relative;
+}
+
+.content-row__slider::-webkit-scrollbar {
+  display: none;
+}
+
+.content-row__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 20, 20, 0.7);
+  color: var(--text-primary);
+  font-size: var(--fs-2xl);
+  cursor: pointer;
+  z-index: 10;
+  border: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.content-row:hover .content-row__arrow {
+  opacity: 1;
+}
+
+.content-row__arrow--left { left: 0; }
+.content-row__arrow--right { right: 0; }
+
+/* ── Content Card ───────────────────────────────────────────── */
+.content-card {
+  flex-shrink: 0;
+  width: var(--card-width);
+  cursor: pointer;
+  transition: transform var(--transition-base), z-index 0s;
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.content-card:hover {
+  transform: scale(1.3);
+  z-index: 10;
+  box-shadow: var(--shadow-card);
+}
+
+.content-card__image {
+  width: 100%;
+  height: var(--card-height);
+  background: var(--bg-card);
+  overflow: hidden;
+  position: relative;
+}
+
+.content-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--transition-fast);
+}
+
+.content-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  text-align: center;
+  padding: var(--space-sm);
+}
+
+.content-card__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  padding: var(--space-sm);
+  transform: translateY(100%);
+  transition: transform var(--transition-base);
+}
+
+.content-card:hover .content-card__info {
+  transform: translateY(0);
+}
+
+.content-card__title-text {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.content-card__match {
+  color: var(--success);
+  font-weight: var(--fw-bold);
+}
+
+/* ── Progress Bar (Continue Watching) ───────────────────────── */
+.progress-bar {
+  height: 3px;
+  background: var(--border-color);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: var(--netflix-red);
+  transition: width var(--transition-base);
+}
+
+/* ── Loading skeleton ───────────────────────────────────────── */
+.skeleton-card {
+  flex-shrink: 0;
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@media (max-width: 768px) {
+  .hero { height: 60vh; min-height: 400px; }
+  .hero__title { font-size: var(--fs-3xl); }
+  .content-card { width: 160px; }
+  .content-card__image { height: 90px; }
+  .content-card:hover { transform: scale(1.1); }
+}
