@@ -28,10 +28,20 @@ builder.Services.AddAutoMapper(
     typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler));
 
 //-- CORS ───────────────────────────────────────────────────────────────
-builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
-       p.WithOrigins("http://localhost:5173")
-       .AllowAnyHeader()
-       .AllowAnyMethod()));
+// ── CORS ── (ONE policy only, replaces both old AddCors calls)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "https://netflix-clone-deployed-theta.vercel.app",
+                "http://localhost:5173"  // keep for local dev
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 //--------------------------
 
 // ── Application Services ───────────────────────────────────────────────────
@@ -64,18 +74,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins(
-                "https://your-app.vercel.app",       // if React is on Vercel
-                "https://yoursite.monsterasp.net"    // if React is served from same host
-              )
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
 
 builder.Logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.None);
 // ── Controllers & Swagger ──────────────────────────────────────────────────
@@ -110,34 +108,26 @@ builder.Services.AddSwaggerGen(c =>
 // ── Build ──────────────────────────────────────────────────────────────────
 var app = builder.Build();
 
-// ── Seed ───────────────────────────────────────────────────────────────────
-// Runs migrations and seeds essential data (roles, plans, admin, genres, persons).
-// Idempotent — safe to run on every restart.
 await DatabaseSeeder.SeedAsync(app.Services);
 
-// ── Middleware ─────────────────────────────────────────────────────────────
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/api/subscription/webhook"))
-    {
         context.Request.EnableBuffering();
-    }
     await next();
 });
 
-//app.UseHttpsRedirection();
-app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseCors("AllowFrontend");
-app.MapControllers();
+app.UseCors("AllowFrontend");  
+app.UseAuthentication();       
+app.UseAuthorization();        
+app.MapControllers();          
 
 app.Run();
