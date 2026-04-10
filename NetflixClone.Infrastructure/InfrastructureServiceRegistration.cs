@@ -24,6 +24,10 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IJwtTokenGeneration, JwtTokenGeneration>();
         services.AddScoped<IOtpService, OtpService>();
 
+        // ── Exception Handling ─────────────────────────────────────────────
+        services.AddExceptionHandler<Middleware.GlobalExceptionHandler>();
+        services.AddProblemDetails();
+
         return services;
     }
 }

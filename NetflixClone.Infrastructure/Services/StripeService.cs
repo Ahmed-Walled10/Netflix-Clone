@@ -67,8 +67,15 @@ namespace NetflixClone.Infrastructure.Services
                     new() { Price = stripePriceId, Quantity = 1 }
                 },
                 Mode = "subscription",
-                SuccessUrl = "http://localhost:5173/success",
-                CancelUrl = "http://localhost:5173/cancel",
+                
+                // --- Deployment URLs ---
+                // SuccessUrl = "https://netflix-clone-deployed-theta.vercel.app/subscription/success",
+                // CancelUrl = "https://netflix-clone-deployed-theta.vercel.app/plans",
+
+                // --- Local URLs ---
+                SuccessUrl = "http://localhost:5173/subscription/success",
+                CancelUrl = "http://localhost:5173/plans",
+
                 Metadata = new Dictionary<string, string>
                 {
                     { "planId", planId.ToString() }

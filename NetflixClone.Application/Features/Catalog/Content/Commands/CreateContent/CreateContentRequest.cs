@@ -8,28 +8,18 @@ public class CreateContentRequest : IRequest<CreateContentResponse>
 {
     // ── Core identity ─────────────────────────────────────────────────────────
 
-    [Required]
     public ContentType ContentType { get; set; }
 
-    [Required]
-    [StringLength(200, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
-    [StringLength(200)]
     public string? OriginalTitle { get; set; }
 
-    
-    [StringLength(220)]
     public string? Slug { get; set; }
 
-    [Required]
-    [StringLength(2000, MinimumLength = 10)]
     public string Description { get; set; } = string.Empty;
 
-    [StringLength(300)]
     public string? Tagline { get; set; }
 
-    [Required]
     [Range(1888, 2100)]
     public int ReleaseYear { get; set; }
 
@@ -37,17 +27,15 @@ public class CreateContentRequest : IRequest<CreateContentResponse>
     [Range(1888, 2100)]
     public int? EndYear { get; set; }
 
-    [Range(1, 1200)]
+    [Range(1, 1440)]
     public int? DurationMinutes { get; set; }
 
     // ── Classification ────────────────────────────────────────────────────────
 
     /// <summary>Age-restriction rating (G, PG, PG-13, TV-14, TV-MA, NC-17 …).</summary>
-    [Required]
     public MaturityRating MaturityRating { get; set; }
 
     
-    [StringLength(10)]
     public string OriginalLanguage { get; set; } = "en";
 
     // ── Media URLs ──────────────────────────────────────────────────────────────

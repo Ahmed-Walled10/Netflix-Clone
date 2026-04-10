@@ -7,9 +7,6 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
     {
         public string? UserId { get; set; }
 
-
-        [Required]
-        [StringLength(20, MinimumLength = 1)]
         public string Name { get; set; }
         [Required]
         [Range(0, 120)]
@@ -19,7 +16,6 @@ namespace NetflixClone.Application.Features.Profiles.Commands.CreateProfile
 
         public string? AvatarUrl { get; set; } = null;
 
-        [StringLength(6, MinimumLength = 6)]
         public string? PinHash { get; set; }
 
         [StringLength(10)]

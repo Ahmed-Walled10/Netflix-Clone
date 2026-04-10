@@ -1,0 +1,39 @@
+﻿NS: NetflixClone.Application.Features.Catalog.Content.Commands.CreateContent | CLS: CreateContentRequest | PROPS: string Title, string Description, string OriginalLanguage, bool IsAvailable, bool IsOriginal, List<Guid> GenreIds, List<ContentPersonRequest> Persons, List<CreateSeasonRequest> Seasons, List<CreateEpisodeRequest> Episodes, string Title, bool IsAvailable, 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.DeleteContent | CLS: DeleteContentRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.MakeContentAvailable | CLS: MakeContentAvaliableRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.UploadContentImages | CLS: UploadContentImagesRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.UploadContentVideo | CLS: UploadContentVideoRequest | PROPS: Stream FileStream, string FileName, 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.UploadEpisodeThumbnail | CLS: UploadEpisodeThumbnailRequest | PROPS: Stream FileStream, string FileName, 
+NS: NetflixClone.Application.Features.Catalog.Content.Queries.GetContentById | CLS: GetContentByIdRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.ContentGenres.Commands.CreateGenre | CLS: CreateGenreRequest | PROPS: string Name, 
+NS: NetflixClone.Application.Features.Catalog.ContentGenres.Commands.DeleteGenre | CLS: DeleteGenreRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Person.Commands.CreatePerson | CLS: CreatePersonRequest | PROPS: string FullName, 
+NS: NetflixClone.Application.Features.Catalog.Person.Commands.DeletePerson | CLS: DeletePersonRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Person.Commands.UploadPersonPhoto | CLS: UploadPersonPhotoRequest | PROPS: Stream FileStream, string FileName, 
+NS: NetflixClone.Application.Features.Catalog.Person.Queries.GetPersonById | CLS: GetPersonByIdRequest | PROPS: 
+NS: NetflixClone.Application.Features.Catalog.Queries.GetAllCatalog | CLS: GetCatalogRequest | PROPS: CatalogResourceParameters CatalogResourceParameters, bool IsRequestedByAdmin, 
+NS: NetflixClone.Application.Features.Catalog.Queries.GetTrendingContent | CLS: GetTrendingContentRequest | PROPS: int Count, 
+NS: NetflixClone.Application.Features.Engagement.Commands.AddRating | CLS: AddRatingRequest | PROPS: 
+NS: NetflixClone.Application.Features.Engagement.Commands.DeleteRating | CLS: DeleteRatingRequest | PROPS: 
+NS: NetflixClone.Application.Features.Engagement.Queries.GetMovieRatings | CLS: GetMovieRatingsRequest | PROPS: RatingsResourceParameters RatingsResourceParameters, 
+NS: NetflixClone.Application.Features.Engagement.Queries.GetMyMovieRating | CLS: GetMyMovieRatingRequest | PROPS: 
+NS: NetflixClone.Application.Features.Engagement.Queries.GetMyRatings | CLS: GetMyRatingsRequest | PROPS: 
+NS: NetflixClone.Application.Features.Engagement.Queries.GetWatchHistory | CLS: GetWatchHistoryRequest | PROPS: bool ContinueWatchingOnly, 
+NS: NetflixClone.Application.Features.Profiles.Commands.CreateProfile | CLS: CreateProfileRequest | PROPS: bool? IsKidsMode, string? AvatarUrl, string? PreferredLanguage, 
+NS: NetflixClone.Application.Features.Profiles.Commands.DeleteProfile | CLS: DeleteProfileRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Profiles.Commands.LoginToProfile | CLS: LoginToProfileRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Profiles.Commands.SwitchProfile | CLS: SwitchProfileRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Profiles.Queries.GetProfiles | CLS: GetProfilesRequest | PROPS: 
+NS: NetflixClone.Application.Features.Streaming.Queries.PlayContent | CLS: PlayContentRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Subscription_Plans.Commands.AddPlans | CLS: AddPlanRequest | PROPS: string Name, string? DisplayName, bool? IsActive, 
+NS: NetflixClone.Application.Features.Subscription_Plans.Commands.DeletePlan | CLS: DeletePlanRequest | PROPS: 
+NS: NetflixClone.Application.Features.Subscription_Plans.Queries.GetPlans | CLS: GetPlansRequest | PROPS: 
+NS: NetflixClone.Application.Features.Subscriptions.Commands.HandleStripeWebhook | CLS: HandleStripeWebhookRequest | PROPS: string JsonPayload, string StripeSignatureHeader
+NS: NetflixClone.Application.Features.Subscriptions.Commands.SubscribePlan | CLS: SubscribePlanRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Subscriptions.Queries.GetMySubscription | CLS: GetMySubscriptionRequest | PROPS: string UserId, 
+NS: NetflixClone.Application.Features.Catalog.Content.Commands.UpdateContent | CLS: UpdateContentCommand | PROPS: UpdateContentData Data, 
+NS: NetflixClone.Application.Features.Catalog.ContentGenres.Commands.UpdateGenre | CLS: UpdateGenreCommand | PROPS: UpdateGenreData Data, 
+NS: NetflixClone.Application.Features.Catalog.Person.Commands.UpdatePerson | CLS: UpdatePersonCommand | PROPS: UpdatePersonData Data, 
+NS: NetflixClone.Application.Features.Engagement.Commands.UpdateRating | CLS: UpdateRatingCommand | PROPS: UpdateRatingData Data, 
+NS: NetflixClone.Application.Features.Profiles.Commands.UpdateProfile | CLS: UpdateProfileCommand | PROPS: string UserId, UpdateProfileData Data, 
+NS: NetflixClone.Application.Features.Subscription_Plans.Commands.UpdatePlans | CLS: UpdatePlanCommand | PROPS: UpdatePlanData Data, 

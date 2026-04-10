@@ -8,17 +8,14 @@ using NetflixClone.Infrastructure.Mail;
 using NetflixClone.Infrastructure.Persistence.Seeds;
 using NetflixClone.Persistence;
 using NetflixClone.Infrastructure;
+using NetflixClone.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Persistence (DbContext + Identity) ────────────────────────────────────
 builder.Services.AddPersistenceServices(builder.Configuration);
 
-// ── MediatR ────────────────────────────────────────────────────────────────
-// Scans the Application assembly for all IRequestHandler implementations.
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(
-        typeof(NetflixClone.Application.Features.Authentication.Commands.Login.LoginRequestHandler).Assembly));
+
 
 // ── AutoMapper ─────────────────────────────────────────────────────────────
 // AutoMapper v13+ ships AddAutoMapper() in the core package (DI extension pkg removed).
@@ -34,8 +31,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "https://netflix-clone-deployed-theta.vercel.app",
-                "http://localhost:5173"  // keep for local dev
+                // "https://netflix-clone-deployed-theta.vercel.app", // Deployment
+                "http://localhost:5173"  // Local dev
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
@@ -45,8 +42,7 @@ builder.Services.AddCors(options =>
 //--------------------------
 
 // ── Application Services ───────────────────────────────────────────────────
-// The Application Layer doesn't currently register its own services in its own 
-// registration method, so these continue to be registered in infrastructure
+builder.Services.AddApplicationServices();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -110,14 +106,14 @@ var app = builder.Build();
 
 await DatabaseSeeder.SeedAsync(app.Services);
 
+// Swagger
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
-app.UseHttpsRedirection();
-
+// ✅ Must be FIRST before everything
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/api/subscription/webhook"))
@@ -125,9 +121,11 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseCors("AllowFrontend");  
-app.UseAuthentication();       
-app.UseAuthorization();        
-app.MapControllers();          
+app.UseExceptionHandler();
+app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

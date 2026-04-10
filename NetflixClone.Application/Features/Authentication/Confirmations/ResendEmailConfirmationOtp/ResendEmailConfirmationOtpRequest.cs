@@ -5,7 +5,6 @@ namespace NetflixClone.Application.Features.Authentication.Confirmations.ResendE
 
 public class ResendEmailConfirmationOtpRequest : IRequest<bool>
 {
-    [Required]
-    [EmailAddress]
     public string Email { get; set; } = string.Empty;
+
 }
